@@ -1,46 +1,32 @@
+import { noImageUrl } from '@/consts/metadata'
 import { Artist } from '@/db/artists'
+import { Song, SongCredit } from '@/db/songs'
 import Link from 'next/link'
-import { FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa'
 
 export interface ArtistItemProps {
-  item: Artist
+  item: Artist & {
+    song_credits?: (SongCredit & { songs: Song })[]
+  }
 }
 
 const ArtistItem = ({ item }: ArtistItemProps) => {
-  const { id, name, kana, twitter_screenname, instagram_id, tiktok_id } = item
+  const { id, name } = item
+  const src = getImageSrc({ item })
   return (
     <Link href={`/artists/${id}`} prefetch={false}>
-      <div className=" min-h-20 rounded-lg border p-2 text-left bg-white hover:bg-gray-100">
-        <div className="text-sm font-semibold overflow-hidden overflow-ellipsis whitespace-nowrap">
+      <div className="flex items-center  rounded-lg border text-left bg-white hover:bg-gray-100">
+        <img src={src} alt={name} className="w-12 h-12 object-cover rounded-l" />
+        <div className="p-2 text-sm font-semibold overflow-hidden overflow-ellipsis whitespace-nowrap">
           {name}
         </div>
-        {twitter_screenname && (
-          <div className="flex text-xs text-gray-500">
-            <span className="pr-1 flex items-center">
-              <FaTwitter />
-            </span>
-            <span>{twitter_screenname}</span>
-          </div>
-        )}
-        {instagram_id && (
-          <div className="flex text-xs text-gray-500">
-            <span className="pr-1 flex items-center">
-              <FaInstagram />
-            </span>
-            <span>{instagram_id}</span>
-          </div>
-        )}
-        {tiktok_id && (
-          <div className="flex text-xs text-gray-500">
-            <span className="pr-1 flex items-center">
-              <FaTiktok />
-            </span>
-            <span>{tiktok_id}</span>
-          </div>
-        )}
       </div>
     </Link>
   )
+}
+
+const getImageSrc = ({ item }: ArtistItemProps) => {
+  const song = item.song_credits?.map((i) => i.songs)?.[0]
+  return song?.thumbnail_url || noImageUrl
 }
 
 export default ArtistItem

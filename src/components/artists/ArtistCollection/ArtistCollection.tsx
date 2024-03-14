@@ -1,8 +1,11 @@
 import { Artist } from '@/db/artists'
+import { Song, SongCredit } from '@/db/songs'
 import ArtistItem from './ArtistItem'
 
 interface Props {
-  artists: Artist[]
+  artists: (Artist & {
+    song_credits?: (SongCredit & { songs: Song })[]
+  })[]
 }
 
 const ArtistCollection = async ({ artists }: Props) => {

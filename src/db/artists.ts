@@ -27,7 +27,25 @@ export const getArtist = (id: number) =>
 
 export const listArtists = unstable_cache(
   async () => {
-    const artists = await prisma.artists.findMany({ orderBy: { kana: 'asc' } })
+    const artists = await prisma.artists.findMany({
+      include: {
+        song_credits: {
+          include: {
+            songs: true,
+          },
+          where: {
+            songs: {
+              thumbnail_url: {
+                not: null,
+              },
+            },
+          },
+
+          take: 1,
+        },
+      },
+      orderBy: [{ kana: 'asc' }],
+    })
     return artists
   },
   ['artists'],
