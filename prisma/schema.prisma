@@ -1,0 +1,448 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model annual_events {
+  id         Int                    @id @default(autoincrement())
+  title      String                 @db.VarChar(255)
+  date       String                 @db.VarChar(31)
+  since_year Int
+  until_year Int?
+  category   annual_events_category
+}
+
+model articles {
+  id            Int     @id @default(autoincrement())
+  title         String  @db.VarChar(255)
+  url           String  @unique(map: "url") @db.VarChar(255)
+  published_at  String? @db.VarChar(255)
+  thumbnail_url String? @db.VarChar(255)
+}
+
+model artists {
+  id                 Int             @id @default(autoincrement())
+  slug               String          @db.VarChar(255)
+  name               String          @db.VarChar(255)
+  kana               String          @db.VarChar(255)
+  wikipedia_slug     String?         @db.VarChar(255)
+  twitter_screenname String?         @db.VarChar(255)
+  instagram_id       String?         @db.VarChar(255)
+  tiktok_id          String?         @db.VarChar(255)
+  url                String?         @db.VarChar(255)
+  costumes           costumes[]
+  event_credits      event_credits[]
+  song_credits       song_credits[]
+}
+
+model blogs {
+  id            Int           @id @default(autoincrement())
+  title         String        @db.VarChar(255)
+  url           String        @unique(map: "url") @db.VarChar(255)
+  published_at  String        @db.VarChar(255)
+  thumbnail_url String?       @db.VarChar(255)
+  author        blogs_author?
+
+  @@index([author], map: "author")
+  @@index([published_at], map: "published_at")
+}
+
+model costume_images {
+  id               Int      @id @default(autoincrement())
+  costume_id       Int
+  display_order    Int
+  image_key        String   @db.VarChar(255)
+  image_credit     String   @db.VarChar(255)
+  image_credit_url String   @db.VarChar(255)
+  description      String   @db.VarChar(255)
+  costumes         costumes @relation(fields: [costume_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costume_images_ibfk_1")
+
+  @@index([costume_id], map: "costume_id")
+}
+
+model costume_info {
+  id Int @id @default(autoincrement())
+}
+
+model costume_tweets {
+  id         Int      @id @default(autoincrement())
+  costume_id Int
+  tweet_id   String   @db.VarChar(255)
+  costumes   costumes @relation(fields: [costume_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costume_tweets_ibfk_1")
+  tweets     tweets   @relation(fields: [tweet_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costume_tweets_ibfk_3")
+
+  @@index([costume_id], map: "costume_id")
+  @@index([tweet_id], map: "tweet_id")
+}
+
+model costumes {
+  id                     Int                      @id @default(autoincrement())
+  slug                   String                   @db.VarChar(255)
+  name                   String                   @db.VarChar(255)
+  is_official_name       Boolean                  @default(false)
+  debut_event_id         Int?
+  artist_id              Int?
+  type                   costumes_type
+  image_key              String?                  @db.VarChar(255)
+  costume_images         costume_images[]
+  costume_tweets         costume_tweets[]
+  artists                artists?                 @relation(fields: [artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costumes_ibfk_1")
+  events                 events?                  @relation(fields: [debut_event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costumes_ibfk_2")
+  event_cosutumes        event_cosutumes[]
+  youtube_video_costumes youtube_video_costumes[]
+
+  @@index([artist_id], map: "artist_id")
+  @@index([debut_event_id], map: "debut_event_id")
+}
+
+model event_articles {
+  id Int @id @default(autoincrement())
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model event_casts {
+  id       Int    @id @default(autoincrement())
+  event_id Int
+  cast     String @db.VarChar(255)
+  events   events @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_casts_ibfk_1")
+
+  @@index([event_id], map: "event_id")
+}
+
+model event_cosutumes {
+  id            Int      @id @default(autoincrement())
+  event_id      Int
+  costume_id    Int
+  display_order Int
+  events        events   @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_cosutumes_ibfk_1")
+  costumes      costumes @relation(fields: [costume_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_cosutumes_ibfk_2")
+
+  @@index([costume_id], map: "costume_id")
+  @@index([event_id], map: "event_id")
+}
+
+model event_credits {
+  id        Int     @id @default(autoincrement())
+  event_id  Int
+  artist_id Int
+  title     String  @db.VarChar(255)
+  name      String? @db.VarChar(255)
+  events    events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_1")
+  artists   artists @relation(fields: [artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_2")
+
+  @@index([artist_id], map: "artist_id")
+  @@index([event_id], map: "event_id")
+}
+
+model event_notes {
+  id Int @id @default(autoincrement())
+}
+
+model event_places {
+  id      Int      @id @default(autoincrement())
+  name    String   @db.VarChar(255)
+  kana    String   @db.VarChar(255)
+  region  String   @db.VarChar(255)
+  address String   @db.VarChar(255)
+  events  events[]
+}
+
+model event_setlist {
+  id         Int     @id @default(autoincrement())
+  event_id   Int
+  order      Int
+  song_id    Int
+  song_title String? @db.VarChar(255)
+  note       String? @db.Text
+  events     events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_1")
+  songs      songs   @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_2")
+
+  @@index([event_id], map: "event_id")
+  @@index([song_id], map: "song_id")
+}
+
+model event_tweets {
+  id       Int    @id @default(autoincrement())
+  event_id Int
+  tweet_id String @db.VarChar(255)
+  events   events @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_tweets_ibfk_1")
+  tweets   tweets @relation(fields: [tweet_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_tweets_ibfk_2")
+
+  @@index([event_id], map: "event_id")
+  @@index([tweet_id], map: "tweet_id")
+}
+
+model events {
+  id              Int               @id @default(autoincrement())
+  title           String            @db.VarChar(255)
+  type            events_type
+  date            String            @db.VarChar(31)
+  start           String?           @db.VarChar(31)
+  place_id        Int?
+  costumes        costumes[]
+  event_casts     event_casts[]
+  event_cosutumes event_cosutumes[]
+  event_credits   event_credits[]
+  event_setlist   event_setlist[]
+  event_tweets    event_tweets[]
+  event_places    event_places?     @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_ibfk_1")
+
+  @@index([date], map: "date")
+  @@index([place_id], map: "place_id")
+}
+
+model photo_albums {
+  id Int @id @default(autoincrement())
+}
+
+model playground {
+  id   Int   @id @default(autoincrement())
+  data Json?
+}
+
+model post_categories {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(255)
+  posts posts[]
+}
+
+model posts {
+  id              Int             @id @default(autoincrement())
+  title           String          @db.VarChar(255)
+  body            String?         @db.Text
+  description     String?         @db.VarChar(255)
+  thumbnailKey    String?         @db.VarChar(255)
+  category_id     Int
+  updated_at      String          @db.VarChar(255)
+  created_at      String          @db.VarChar(255)
+  post_categories post_categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "posts_ibfk_1")
+
+  @@index([category_id], map: "category_id")
+}
+
+model record_editions {
+  id             Int             @id @default(autoincrement())
+  catalog_number String          @db.VarChar(255)
+  release_date   String          @db.VarChar(31)
+  record_id      Int
+  name           String          @db.VarChar(255)
+  display_order  Int
+  price          String?         @db.VarChar(255)
+  asin           String?         @db.VarChar(255)
+  product_url    String?         @db.VarChar(255)
+  thumbnail_url  String?         @db.VarChar(255)
+  records        records         @relation(fields: [record_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "record_editions_ibfk_1")
+  record_tracks  record_tracks[]
+
+  @@index([record_id], map: "record_id")
+}
+
+model record_tracks {
+  id              Int                @id @default(autoincrement())
+  edition_id      Int
+  disc            Int
+  track           Int
+  type            record_tracks_type
+  song_id         Int?
+  title           String             @db.VarChar(255)
+  songs           songs?             @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "record_tracks_ibfk_1")
+  record_editions record_editions    @relation(fields: [edition_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "record_tracks_ibfk_2")
+
+  @@index([edition_id], map: "edition_id")
+  @@index([song_id], map: "song_id")
+}
+
+model records {
+  id              Int               @id @default(autoincrement())
+  slug            String            @unique(map: "slug") @db.VarChar(255)
+  name            String            @db.VarChar(255)
+  type            records_type
+  label           String            @db.VarChar(255)
+  product_url     String?           @db.VarChar(255)
+  apple_music_id  String?           @db.VarChar(255)
+  record_editions record_editions[]
+}
+
+model song_credits {
+  id         Int                  @id @default(autoincrement())
+  song_id    Int
+  artist_id  Int
+  role       song_credits_role
+  name       String               @db.VarChar(255)
+  title      String?              @db.VarChar(255)
+  source     song_credits_source?
+  source_url String?              @db.VarChar(255)
+  songs      songs                @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "song_credits_ibfk_1")
+  artists    artists              @relation(fields: [artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "song_credits_ibfk_2")
+
+  @@index([artist_id], map: "artist_id")
+  @@index([song_id], map: "song_id")
+}
+
+model songs {
+  id                  Int                   @id @default(autoincrement())
+  slug                String                @unique(map: "slug") @db.VarChar(255)
+  title               String                @db.VarChar(255)
+  kana                String                @db.VarChar(255)
+  jasrac_code         String?               @db.VarChar(255)
+  iswc_code           String?               @db.VarChar(255)
+  thumbnail_url       String?               @db.VarChar(255)
+  event_setlist       event_setlist[]
+  record_tracks       record_tracks[]
+  song_credits        song_credits[]
+  youtube_video_songs youtube_video_songs[]
+
+  @@index([kana], map: "kana")
+}
+
+model tiktok_videos {
+  id Int @id @default(autoincrement())
+}
+
+model tweet_authors {
+  id          Int      @id @default(autoincrement())
+  screen_name String   @unique(map: "screen_name") @db.VarChar(255)
+  user_name   String   @db.VarChar(255)
+  icon_url    String   @db.VarChar(255)
+  tweets      tweets[]
+}
+
+model tweets {
+  id             String           @id @db.VarChar(255)
+  screen_name    String           @db.VarChar(255)
+  text           String           @db.Text
+  published_at   String           @db.VarChar(255)
+  image_urls     String?          @db.Text
+  costume_tweets costume_tweets[]
+  event_tweets   event_tweets[]
+  tweet_authors  tweet_authors    @relation(fields: [screen_name], references: [screen_name], onDelete: NoAction, onUpdate: NoAction, map: "tweets_ibfk_1")
+
+  @@index([published_at], map: "published_at")
+  @@index([screen_name], map: "screen_name")
+}
+
+model youtube_channels {
+  id             String           @id @db.VarChar(255)
+  title          String           @db.VarChar(255)
+  thumbnail_url  String           @db.VarChar(255)
+  sync_enabled   Boolean
+  updated_at     DateTime         @default(now()) @db.DateTime(0)
+  youtube_videos youtube_videos[]
+}
+
+model youtube_types {
+  id             Int              @id @default(autoincrement())
+  slug           String           @db.VarChar(255)
+  name           String           @db.VarChar(255)
+  sort_priority  Int
+  icon_emoji     String?          @db.VarChar(1)
+  youtube_videos youtube_videos[]
+}
+
+model youtube_video_costumes {
+  id             Int            @id @default(autoincrement())
+  video_id       String         @db.VarChar(255)
+  costume_id     Int
+  youtube_videos youtube_videos @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "youtube_video_costumes_ibfk_1")
+  costumes       costumes       @relation(fields: [costume_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "youtube_video_costumes_ibfk_2")
+
+  @@index([costume_id], map: "costume_id")
+  @@index([video_id], map: "video_id")
+}
+
+model youtube_video_events {
+  id Int @id @default(autoincrement())
+}
+
+model youtube_video_songs {
+  id             Int            @id @default(autoincrement())
+  video_id       String         @db.VarChar(255)
+  song_id        Int
+  youtube_videos youtube_videos @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "youtube_video_songs_ibfk_1")
+  songs          songs          @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "youtube_video_songs_ibfk_2")
+
+  @@index([song_id], map: "song_id")
+  @@index([video_id], map: "video_id")
+}
+
+model youtube_videos {
+  id                     String                   @id @db.VarChar(255)
+  published_at           String                   @db.VarChar(255)
+  channel_id             String                   @db.VarChar(255)
+  title                  String                   @db.VarChar(255)
+  type_id                Int
+  is_short               Boolean
+  youtube_video_costumes youtube_video_costumes[]
+  youtube_video_songs    youtube_video_songs[]
+  youtube_channels       youtube_channels         @relation(fields: [channel_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "youtube_videos_ibfk_1")
+  youtube_types          youtube_types            @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "youtube_videos_ibfk_2")
+
+  @@index([channel_id], map: "channel_id")
+  @@index([published_at], map: "published_at")
+  @@index([type_id], map: "type_id")
+}
+
+enum events_type {
+  LIVE
+  EVENT
+  BROADCAST
+  MILESTONE
+  OTHER
+}
+
+enum records_type {
+  SINGLE
+  DIGITAL
+  ALBUM
+  MINI_ALBUM
+}
+
+enum song_credits_role {
+  Vocal
+  Music
+  Arrangement
+  Lyrics
+  Produce
+  Dance
+}
+
+enum record_tracks_type {
+  sound
+  live
+  movie
+  VR
+}
+
+enum annual_events_category {
+  ANNIVERSARY
+  BIRTHDAY
+}
+
+enum blogs_author {
+  kanami
+  julia
+  hitoka
+  haruka
+  aki
+  hiyori
+  kumicho
+  mako
+  sara
+  banbi
+}
+
+enum costumes_type {
+  tokisen
+  chotokisen
+  birthday
+}
+
+enum song_credits_source {
+  BOOKLET
+  JASRAC
+  EXTERNAL
+}
