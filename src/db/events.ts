@@ -29,6 +29,11 @@ export const getEvent = (id: number) =>
                 },
               },
             },
+            orderBy: {
+              tweets: {
+                published_at: 'desc',
+              },
+            },
           },
         },
         where: {
