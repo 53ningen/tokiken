@@ -160,11 +160,11 @@ model event_setlist {
   id         Int     @id @default(autoincrement())
   event_id   Int
   order      Int
-  song_id    Int
+  song_id    Int?
   song_title String? @db.VarChar(255)
   note       String? @db.Text
   events     events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_1")
-  songs      songs   @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_2")
+  songs      songs?  @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_2")
 
   @@index([event_id], map: "event_id")
   @@index([song_id], map: "song_id")
