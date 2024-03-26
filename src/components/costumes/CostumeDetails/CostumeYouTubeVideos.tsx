@@ -1,4 +1,4 @@
-import SectionHeading from '@/components/SectionHeading'
+import SectionHeading from '@/components/commons/SectionHeading'
 import VideoItem from '@/components/contents/youtube/VideoCollection/VideoItem'
 import { listYouTubeVideosByCostume } from '@/db/youtube-vidoes'
 

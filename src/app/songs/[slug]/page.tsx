@@ -1,6 +1,6 @@
-import SectionHeading from '@/components/SectionHeading'
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
+import SectionHeading from '@/components/commons/SectionHeading'
 import SongVideoCollection from '@/components/contents/youtube/VideoCollection/SongVideoCollection'
 import RecordEditionCollection from '@/components/records/RecordEditionCollection/RecordEditionCollection'
 import SongCredits from '@/components/songs/SongData/SongCredits'

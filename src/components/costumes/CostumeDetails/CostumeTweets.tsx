@@ -1,4 +1,4 @@
-import SectionHeading from '@/components/SectionHeading'
+import SectionHeading from '@/components/commons/SectionHeading'
 import Tweet from '@/components/contents/tweets/Tweet'
 import { listTweetsByCostumeId } from '@/db/tweets'
 

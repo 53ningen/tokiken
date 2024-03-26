@@ -1,7 +1,7 @@
-import SectionHeading from '@/components/SectionHeading'
 import Alert from '@/components/commons/Alert'
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
+import SectionHeading from '@/components/commons/SectionHeading'
 import Title from '@/components/commons/Title'
 import CostumeCollection from '@/components/costumes/CostumeCollection/CostumeCollection'
 import { inquiryFormUrl } from '@/consts/metadata'

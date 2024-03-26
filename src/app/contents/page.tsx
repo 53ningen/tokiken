@@ -1,6 +1,6 @@
-import SectionHeading from '@/components/SectionHeading'
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
+import SectionHeading from '@/components/commons/SectionHeading'
 import Title from '@/components/commons/Title'
 
 interface Props {}

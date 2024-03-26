@@ -1,3 +1,4 @@
+import ConfigureAmplifyClientSide from '@/components/commons/ConfigureAmplify'
 import Footer from '@/components/commons/Footer'
 import Header from '@/components/commons/Header'
 import { GoogleTagManager } from '@next/third-parties/google'
@@ -58,6 +59,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={inter.className}>
+        <ConfigureAmplifyClientSide />
         <Header />
         <main>{children}</main>
         <Footer />

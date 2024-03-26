@@ -1,4 +1,4 @@
-import SectionHeading from '@/components/SectionHeading'
+import SectionHeading from '@/components/commons/SectionHeading'
 import { listYouTubeVidoesBySong } from '@/db/youtube-vidoes'
 import VideoCollection from './VideoCollection'
 

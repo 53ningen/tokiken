@@ -61,7 +61,7 @@ export const TokisenRegimes: Regime[] = [
       {
         name: '杏ジュリア',
         no: 5,
-        color: '二代目超ときめき♡パープル',
+        color: '二代目ときめき♡パープル',
         colorId: 'purple',
       },
       { name: '吉川ひより', no: 6, color: 'ときめき♡グリーン', colorId: 'green' },

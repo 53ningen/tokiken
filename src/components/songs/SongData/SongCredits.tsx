@@ -1,4 +1,4 @@
-import SectionHeading from '@/components/SectionHeading'
+import SectionHeading from '@/components/commons/SectionHeading'
 import { listSongCreditsBySong } from '@/db/song-credits'
 import SongCreditItem from './SongCreditItem'
 

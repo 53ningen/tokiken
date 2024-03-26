@@ -7,7 +7,7 @@ interface Props {
 
 const Tweet = ({ status }: Props) => {
   return (
-    <div className="grid gap-2 border rounded p-4 hover:bg-gray-100">
+    <div className="flex flex-col gap-2 border rounded p-4 hover:bg-gray-100">
       <div className="flex gap-2">
         <Link
           href={`https://twitter.com/${status.screen_name}/status/${status.id}`}

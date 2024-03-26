@@ -17,11 +17,12 @@ model annual_events {
 }
 
 model articles {
-  id            Int     @id @default(autoincrement())
-  title         String  @db.VarChar(255)
-  url           String  @unique(map: "url") @db.VarChar(255)
-  published_at  String? @db.VarChar(255)
-  thumbnail_url String? @db.VarChar(255)
+  id             Int              @id @default(autoincrement())
+  title          String           @db.VarChar(255)
+  url            String           @unique(map: "url") @db.VarChar(255)
+  published_at   String?          @db.VarChar(255)
+  thumbnail_url  String?          @db.VarChar(255)
+  event_articles event_articles[]
 }
 
 model artists {
@@ -100,14 +101,21 @@ model costumes {
 }
 
 model event_articles {
-  id Int @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
+  event_id   Int
+  article_id Int
+  events     events   @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_1")
+  articles   articles @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_2")
+
+  @@index([event_id], map: "fk_1")
+  @@index([article_id], map: "fk_2")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model event_casts {
-  id       Int    @id @default(autoincrement())
+  id       String @id @db.VarChar(255)
   event_id Int
-  cast     String @db.VarChar(255)
+  name     String @db.VarChar(255)
   events   events @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_casts_ibfk_1")
 
   @@index([event_id], map: "event_id")
@@ -126,20 +134,17 @@ model event_cosutumes {
 }
 
 model event_credits {
-  id        Int     @id @default(autoincrement())
-  event_id  Int
-  artist_id Int
-  title     String  @db.VarChar(255)
-  name      String? @db.VarChar(255)
-  events    events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_1")
-  artists   artists @relation(fields: [artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_2")
+  id         Int     @id @default(autoincrement())
+  event_id   Int
+  artist_id  Int
+  title      String  @db.VarChar(255)
+  name       String? @db.VarChar(255)
+  source_url String? @db.VarChar(255)
+  events     events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_1")
+  artists    artists @relation(fields: [artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_2")
 
   @@index([artist_id], map: "artist_id")
   @@index([event_id], map: "event_id")
-}
-
-model event_notes {
-  id Int @id @default(autoincrement())
 }
 
 model event_places {
@@ -183,7 +188,9 @@ model events {
   date            String            @db.VarChar(31)
   start           String?           @db.VarChar(31)
   place_id        Int?
+  note            String?           @db.Text
   costumes        costumes[]
+  event_articles  event_articles[]
   event_casts     event_casts[]
   event_cosutumes event_cosutumes[]
   event_credits   event_credits[]

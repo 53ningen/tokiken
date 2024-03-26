@@ -23,3 +23,11 @@ export const imageUrl = (imageKey?: string) => {
   const base = process.env.NEXT_PUBLIC_CLOUDFLARE_R2_URL
   return imageKey ? `${base}/${imageKey}` : noImageUrl
 }
+
+export const costumeImageUrl = (size: 'xs' | 'md' | 'lg', imageKey?: string) => {
+  const key = imageKey
+    ? encodeURIComponent(`costumes/${imageKey}.${size}.png`)
+    : undefined
+  const url = imageUrl(key)
+  return url
+}

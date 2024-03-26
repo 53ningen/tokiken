@@ -1,4 +1,4 @@
-import SectionHeading from '@/components/SectionHeading'
+import SectionHeading from '@/components/commons/SectionHeading'
 import { listRecordTracksByEdition } from '@/db/record-tracks'
 import TrackList from './TrackList'
 

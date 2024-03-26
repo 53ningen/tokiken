@@ -45,3 +45,26 @@ export const listTweetsByCostumeId = (costumeId: number) =>
     [`tweets-costume-${costumeId}`],
     { tags: [`tweets-costume-${costumeId}`] }
   )
+
+export const tweetsByDateTag = (date: string) => `tweets-date-${date}`
+export const listTweetsByDate = (date: string) =>
+  unstable_cache(
+    async () => {
+      const tweets = await prisma.tweets.findMany({
+        include: {
+          tweet_authors: true,
+        },
+        where: {
+          published_at: {
+            startsWith: date,
+          },
+        },
+        orderBy: {
+          published_at: 'asc',
+        },
+      })
+      return tweets
+    },
+    [tweetsByDateTag(date)],
+    { tags: [tweetsByDateTag(date)] }
+  )

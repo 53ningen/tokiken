@@ -3,7 +3,10 @@ import { YouTubeVideo } from '@/db/youtube-vidoes'
 import { google } from 'googleapis'
 import { revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
-import { getVideoTypeId, isShortVideo } from '../video_types'
+import {
+  getVideoTypeId,
+  isShortVideo,
+} from '../../../../components/contents/youtube/Editor/VideoTypes'
 
 const maxResults = 50
 const syncRangeMs = 1 * 24 * 60 * 60 * 1000

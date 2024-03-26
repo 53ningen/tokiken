@@ -1,13 +1,16 @@
+'use client'
+
 import Link from 'next/link'
+import { HTMLAttributes } from 'react'
 import { ImInfo, ImWarning } from 'react-icons/im'
 
-interface Props {
+type Props = {
   message: string
   type: 'error' | 'warning' | 'success' | 'info'
   href?: string
-}
+} & HTMLAttributes<HTMLDivElement>
 
-const Alert = ({ message, type, href }: Props) => {
+const Alert = ({ message, type, href, className, ...props }: Props) => {
   const classesForColor = getColor(type)
   const classes = [
     'flex',
@@ -24,14 +27,16 @@ const Alert = ({ message, type, href }: Props) => {
   ]
   const icon = getIcon(type)
   return href ? (
-    <Link href={href}>
-      <div className={classes.join(' ')}>
-        {icon}
-        <span>{message}</span>
-      </div>
-    </Link>
+    <div className={`${classes.join(' ')} ${className}`} {...props}>
+      <Link href={href}>
+        <div>
+          {icon}
+          <span>{message}</span>
+        </div>
+      </Link>
+    </div>
   ) : (
-    <div className={classes.join(' ')}>
+    <div className={`${classes.join(' ')} ${className}`} {...props}>
       {icon}
       <span>{message}</span>
     </div>

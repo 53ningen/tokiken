@@ -2,7 +2,10 @@ import prisma from '@/db/prisma'
 import { google } from 'googleapis'
 import { revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
-import { getVideoTypeId, isShortVideo } from '../../video_types'
+import {
+  getVideoTypeId,
+  isShortVideo,
+} from '../../../../../components/contents/youtube/Editor/VideoTypes'
 
 const youtube = google.youtube('v3')
 

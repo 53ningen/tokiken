@@ -1,4 +1,4 @@
-import SectionHeading from '@/components/SectionHeading'
+import SectionHeading from '@/components/commons/SectionHeading'
 import { Costume, CostumeImage } from '@/db/costumes'
 import CostumeCreditItem from './CostumeCreditItem'
 
