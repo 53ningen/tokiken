@@ -34,24 +34,18 @@ export const updateSetlist = async (state: State, data: FormData): Promise<State
     return { ...state, error: Errors.InvalidRequest.message }
   }
 
-  // 行の追加アクション
-  if (action === 'add-row') {
-    const res = addRow(state, event_id)
-    return res
-  }
-
   // 削除アクション
   const del = action.match(/delete:(\d+)/)
-  const delIndex = del && parseInt(del[1])
-  if (delIndex) {
+  const delIndex = parseInt(del ? del[1] : '')
+  if (!isNaN(delIndex)) {
     const res = deleteRow(state, data, event_id, delIndex)
     return res
   }
 
   // 行の更新・追加アクション
   const update = action.match(/update:(\d+)/)
-  const updateIndex = update && parseInt(update[1])
-  if (updateIndex) {
+  const updateIndex = parseInt(update ? update[1] : '')
+  if (!isNaN(updateIndex) && updateIndex >= 0) {
     const res = await updateRow(state, data, event_id, updateIndex)
     return res
   }
@@ -73,21 +67,6 @@ const extractRowData = async (data: FormData, i: number) => {
     return undefined
   } else {
     return { id, order, song_id, song_title: song_title === '' ? null : song_title }
-  }
-}
-
-const addRow = (state: State, event_id: number) => {
-  const emptyRow: EventSetlist = {
-    id: -1,
-    event_id,
-    order: state.setlist.length + 1,
-    song_id: null,
-    song_title: null,
-    note: null,
-  }
-  return {
-    ...state,
-    setlist: [...state.setlist, emptyRow],
   }
 }
 
@@ -116,7 +95,14 @@ const updateRow = async (
           setlist: [
             ...state.setlist.slice(0, index),
             res,
-            ...state.setlist.slice(index + 1),
+            {
+              id: -1 * (state.setlist.length + 1),
+              event_id,
+              order: state.setlist.length + 1,
+              song_id: null,
+              song_title: null,
+              note: null,
+            },
           ],
           error: undefined,
         }

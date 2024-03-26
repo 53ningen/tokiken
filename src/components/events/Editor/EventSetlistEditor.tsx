@@ -15,7 +15,16 @@ interface Props {
 
 const EventSetlistEditor = ({ event, songs, setlist }: Props) => {
   const [state, dispatch] = useFormState(updateSetlist, {
-    setlist,
+    setlist: [
+      ...setlist,
+      {
+        id: -1 * (setlist.length + 1),
+        event_id: event.id,
+        order: setlist.length + 1,
+        song_id: null,
+        song_title: null,
+      } as EventSetlist,
+    ],
     error: undefined,
   })
   return (
@@ -87,6 +96,7 @@ const EventSetlistEditor = ({ event, songs, setlist }: Props) => {
                 <td className="text-nowrap">
                   <ActionButton
                     id="action"
+                    disabled={setlist.id < 0}
                     name="action"
                     value={`delete:${i}`}
                     type="submit"
@@ -97,21 +107,6 @@ const EventSetlistEditor = ({ event, songs, setlist }: Props) => {
                 </td>
               </tr>
             ))}
-            <tr>
-              <td />
-              <td />
-              <td />
-              <td colSpan={2} className="text-right pt-2">
-                <ActionButton
-                  id="action"
-                  name="action"
-                  value="add-row"
-                  actionType="update"
-                  className="w-full">
-                  行の追加
-                </ActionButton>
-              </td>
-            </tr>
           </tbody>
         </table>
         {state.error && <Alert type="error" message={state.error} />}

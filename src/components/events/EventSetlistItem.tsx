@@ -3,7 +3,7 @@ import { Song } from '@/db/songs'
 import Link from 'next/link'
 
 interface Props {
-  item: EventSetlist & { songs?: Song }
+  item: EventSetlist & { songs: Song | null }
 }
 
 const EventSetlistItem = ({ item }: Props) => {

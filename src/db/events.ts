@@ -204,6 +204,9 @@ export const listEventSetlist = (eventId: number) =>
         include: {
           songs: true,
         },
+        orderBy: {
+          order: 'asc',
+        },
       })
       return setlist
     },
