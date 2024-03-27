@@ -5,6 +5,7 @@ import SectionHeading from '@/components/commons/SectionHeading'
 import Title from '@/components/commons/Title'
 import EventCastEditorWrapper from '@/components/events/Editor/EventCastEditorWrapper'
 import { EventCostumeEditorWrapper } from '@/components/events/Editor/EventCostumeEditorWrapper'
+import EventCreditEditorWrapper from '@/components/events/Editor/EventCreditEditorWrapper'
 import EventEditorNavigation from '@/components/events/Editor/EventEditorNavigation'
 import { EventEditorWrapper } from '@/components/events/Editor/EventEditorWrapper'
 import EventNoteEditor from '@/components/events/Editor/EventNoteEditor'
@@ -71,6 +72,7 @@ const EventEdit = async ({ params }: Props) => {
           <SectionHeading title="📝 基本情報" />
           <EventEditorWrapper event={event} />
           <EventCastEditorWrapper event={event} />
+          <EventCreditEditorWrapper event={event} />
           <Preview>
             <EventInfo event={event} />
           </Preview>

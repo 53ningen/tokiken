@@ -2,6 +2,7 @@ import prisma from '@/db/prisma'
 import {
   event_casts,
   event_cosutumes,
+  event_credits,
   event_places,
   event_setlist,
   event_tweets,
@@ -13,6 +14,7 @@ import { unstable_cache } from 'next/cache'
 export type Event = events
 export type EventCostume = event_cosutumes
 export type EventCast = event_casts
+export type EventCredit = event_credits
 export type EventType = events_type
 export type EventPlace = event_places
 export type EventTweet = event_tweets
