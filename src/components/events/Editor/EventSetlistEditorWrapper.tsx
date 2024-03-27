@@ -1,6 +1,7 @@
 'use server'
 
 import { Event, EventSetlist, eventSetlistTag, listEventSetlist } from '@/db/events'
+import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { listSongs } from '@/db/songs'
 import { isAssociateUserServer } from '@/utils/amplify'
@@ -47,7 +48,7 @@ export const updateSetlist = async (state: State, data: FormData): Promise<State
   const updateIndex = parseInt(update ? update[1] : '')
   if (!isNaN(updateIndex) && updateIndex >= 0) {
     const res = await updateRow(state, data, event_id, updateIndex)
-    return res
+    return res as State
   }
 
   return { ...state, error: Errors.InvalidRequest.message }
@@ -82,14 +83,19 @@ const updateRow = async (
   } else {
     try {
       if (row.id < 0) {
-        const res = await prisma.event_setlist.create({
+        const params = {
           data: {
             event_id: event_id,
             order: row.order,
             song_id: row.song_id,
             song_title: row.song_title,
           },
-        })
+        }
+        const res = await executeQueryWithLogging(
+          prisma.event_setlist.create(params),
+          'event_setlist.create',
+          params
+        )
         revalidateTag(eventSetlistTag(event_id))
         return {
           setlist: [
@@ -107,14 +113,19 @@ const updateRow = async (
           error: undefined,
         }
       } else {
-        const res = await prisma.event_setlist.update({
+        const params = {
           where: { id: row.id },
           data: {
             order: row.order,
             song_id: row.song_id,
             song_title: row.song_title,
           },
-        })
+        }
+        const res = await executeQueryWithLogging(
+          prisma.event_setlist.update(params),
+          'event_setlist.update',
+          params
+        )
         revalidateTag(eventSetlistTag(event_id))
         return {
           setlist: [
@@ -144,7 +155,12 @@ const deleteRow = async (
   } else {
     try {
       if (row.id > 0) {
-        await prisma.event_setlist.delete({ where: { id: row.id } })
+        const params = { where: { id: row.id } }
+        await executeQueryWithLogging(
+          prisma.event_setlist.delete(params),
+          'event_setlist.delete',
+          params
+        )
         revalidateTag(eventSetlistTag(event_id))
       }
       return {

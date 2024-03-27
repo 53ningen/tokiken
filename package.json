@@ -27,7 +27,7 @@
     "react-twitter-widgets": "^1.11.0",
     "rehype-raw": "^7.0.0",
     "ulid": "^2.3.0",
-    "vercel": "^33.5.5"
+    "vercel": "^33.6.1"
   },
   "devDependencies": {
     "@types/node": "^20",

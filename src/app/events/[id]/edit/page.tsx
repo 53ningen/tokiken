@@ -3,6 +3,7 @@ import Container from '@/components/commons/Container'
 import Preview from '@/components/commons/Preview'
 import SectionHeading from '@/components/commons/SectionHeading'
 import Title from '@/components/commons/Title'
+import EventArticleEditorWrapper from '@/components/events/Editor/EventArticleEditorWrapper'
 import EventCastEditorWrapper from '@/components/events/Editor/EventCastEditorWrapper'
 import { EventCostumeEditorWrapper } from '@/components/events/Editor/EventCostumeEditorWrapper'
 import EventCreditEditorWrapper from '@/components/events/Editor/EventCreditEditorWrapper'
@@ -11,6 +12,7 @@ import { EventEditorWrapper } from '@/components/events/Editor/EventEditorWrappe
 import EventNoteEditor from '@/components/events/Editor/EventNoteEditor'
 import EventSetlistEditorWrapper from '@/components/events/Editor/EventSetlistEditorWrapper'
 import EventTweetEditorWrapper from '@/components/events/Editor/EventTweetEditorWrapper'
+import EventArticleList from '@/components/events/EventArticleList'
 import EventCostumeList from '@/components/events/EventCostumeList'
 import EventInfo from '@/components/events/EventInfo'
 import EventNote from '@/components/events/EventNote'
@@ -78,10 +80,10 @@ const EventEdit = async ({ params }: Props) => {
           </Preview>
         </div>
         <div>
-          <SectionHeading title="📝 イベントメモ" />
-          <EventNoteEditor event={event} />
+          <SectionHeading title="🎵 セットリスト" />
+          <EventSetlistEditorWrapper event={event} />
           <Preview>
-            <EventNote event={event} />
+            <EventSetList event={event} />
           </Preview>
         </div>
         <div>
@@ -92,6 +94,21 @@ const EventEdit = async ({ params }: Props) => {
           </Preview>
         </div>
         <div>
+          <SectionHeading title="📝 関連記事・URL" />
+          <EventArticleEditorWrapper event={event} />
+          <Preview>
+            <EventArticleList event={event} />
+          </Preview>
+        </div>
+        <div>
+          <SectionHeading title="📝 関連ブログ" />
+          <Preview></Preview>
+        </div>
+        <div>
+          <SectionHeading title="📝 関連 YouTube 動画" />
+          <Preview></Preview>
+        </div>
+        <div>
           <SectionHeading title="📝 関連ツイート" />
           <EventTweetEditorWrapper event={event} />
           <Preview>
@@ -99,27 +116,11 @@ const EventEdit = async ({ params }: Props) => {
           </Preview>
         </div>
         <div>
-          <SectionHeading title="🎵 セットリスト" />
-          <EventSetlistEditorWrapper event={event} />
+          <SectionHeading title="📝 イベントメモ" />
+          <EventNoteEditor event={event} />
           <Preview>
-            <EventSetList event={event} />
+            <EventNote event={event} />
           </Preview>
-        </div>
-        <div>
-          <SectionHeading title="📝 関連 YouTube 動画" />
-          <Preview></Preview>
-        </div>
-        <div>
-          <SectionHeading title="📝 関連記事・URL" />
-          <Preview></Preview>
-        </div>
-        <div>
-          <SectionHeading title="📝 関連ブログ" />
-          <Preview></Preview>
-        </div>
-        <div>
-          <SectionHeading title="📝 その他" />
-          <Preview></Preview>
         </div>
         <div>
           <SectionHeading title="📝 写真" />

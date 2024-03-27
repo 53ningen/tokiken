@@ -12,22 +12,26 @@ const Tweet = ({ status }: Props) => {
         <div className="flex gap-2">
           <Link
             href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
+            rel="noopener noreferrer"
             className="font-bold text-sm"
             target="_blank">
             <img
               src={status.tweet_authors.icon_url!}
+              alt={status.tweet_authors.user_name}
               className="w-10 h-10 rounded-full"
             />
           </Link>
           <div className="grid overflow-hidden text-nowrap">
             <Link
               href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
+              rel="noopener noreferrer"
               className="font-bold text-sm"
               target="_blank">
               {status.tweet_authors.user_name}
             </Link>
             <Link
               href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
+              rel="noopener noreferrer"
               className="text-gray-500 text-sm"
               target="_blank">
               @{status.screen_name}
@@ -41,6 +45,7 @@ const Tweet = ({ status }: Props) => {
           <div className="w-full">
             <Link
               href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
+              rel="noopener noreferrer"
               prefetch={false}
               target="_blank">
               <img
@@ -55,6 +60,7 @@ const Tweet = ({ status }: Props) => {
         <div className="flex text-gray-500 text-sm">
           <Link
             href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
+            rel="noopener noreferrer"
             prefetch={false}
             target="_blank"
             className="hover:underline">

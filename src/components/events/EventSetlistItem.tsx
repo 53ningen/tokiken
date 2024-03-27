@@ -9,7 +9,7 @@ interface Props {
 const EventSetlistItem = ({ item }: Props) => {
   const song = item.songs
   return (
-    <div className="p-1 flex gap-2">
+    <div className="flex gap-2">
       <div className="select-none">{item.order.toString()}.</div>
       <div className="grid gap-2">
         <div className="font-medium">

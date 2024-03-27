@@ -220,3 +220,27 @@ export const listEventSetlist = (eventId: number) =>
       tags: [eventSetlistTag(eventId)],
     }
   )
+
+export const eventArticlesTag = (eventId: number) => `event-articles-${eventId}`
+export const listEventArticles = (eventId: number) =>
+  unstable_cache(
+    async () => {
+      const article = await prisma.articles.findMany({
+        where: {
+          event_articles: {
+            some: {
+              event_id: eventId,
+            },
+          },
+        },
+        orderBy: {
+          published_at: 'asc',
+        },
+      })
+      return article
+    },
+    [eventArticlesTag(eventId)],
+    {
+      tags: [eventArticlesTag(eventId)],
+    }
+  )

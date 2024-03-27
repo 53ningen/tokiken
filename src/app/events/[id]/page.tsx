@@ -1,6 +1,7 @@
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
 import Title from '@/components/commons/Title'
+import EventArticleList from '@/components/events/EventArticleList'
 import EventBlogList from '@/components/events/EventBlogList'
 import EventCostumeList from '@/components/events/EventCostumeList'
 import EventInfo from '@/components/events/EventInfo'
@@ -62,11 +63,12 @@ const Event = async ({ params }: Props) => {
       <EventInfo event={event} />
       <EventNote event={event} />
       <div className="grid gap-8 py-8">
-        <EventCostumeList event={event} showHeading={true} />
-        <EventTweetList event={event} showHeading={true} />
         <EventSetList event={event} showHeading={true} />
+        <EventArticleList event={event} showHeading={true} />
+        <EventCostumeList event={event} showHeading={true} />
         <EventYouTubeVideoList event={event} showHeading={true} />
         <EventBlogList event={event} showHeading={true} />
+        <EventTweetList event={event} showHeading={true} />
         <EventPhotoList event={event} showHeading={true} />
       </div>
     </Container>

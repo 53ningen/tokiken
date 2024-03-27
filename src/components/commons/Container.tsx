@@ -5,9 +5,7 @@ interface Props {
 
 const Container = ({ children, className }: Props) => {
   return (
-    <div className={`mx-auto whitespace-normal overflow-auto break-words ${className}`}>
-      {children}
-    </div>
+    <div className={`mx-auto whitespace-normal break-words ${className}`}>{children}</div>
   )
 }
 
