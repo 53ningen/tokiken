@@ -134,14 +134,15 @@ model event_cosutumes {
 }
 
 model event_credits {
-  id         Int     @id @default(autoincrement())
-  event_id   Int
-  artist_id  Int
-  title      String  @db.VarChar(255)
-  name       String? @db.VarChar(255)
-  source_url String? @db.VarChar(255)
-  events     events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_1")
-  artists    artists @relation(fields: [artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_2")
+  id            Int     @id @default(autoincrement())
+  event_id      Int
+  artist_id     Int
+  title         String  @db.VarChar(255)
+  name          String? @db.VarChar(255)
+  display_order Int
+  source_url    String  @db.VarChar(255)
+  events        events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_1")
+  artists       artists @relation(fields: [artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_credits_ibfk_2")
 
   @@index([artist_id], map: "artist_id")
   @@index([event_id], map: "event_id")
@@ -163,6 +164,7 @@ model event_setlist {
   song_id    Int?
   song_title String? @db.VarChar(255)
   note       String? @db.Text
+  source_url String? @db.VarChar(255)
   events     events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_1")
   songs      songs?  @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_2")
 
@@ -200,10 +202,6 @@ model events {
 
   @@index([date], map: "date")
   @@index([place_id], map: "place_id")
-}
-
-model photo_albums {
-  id Int @id @default(autoincrement())
 }
 
 model playground {
@@ -361,10 +359,6 @@ model youtube_video_costumes {
   @@index([video_id], map: "video_id")
 }
 
-model youtube_video_events {
-  id Int @id @default(autoincrement())
-}
-
 model youtube_video_songs {
   id             Int            @id @default(autoincrement())
   video_id       String         @db.VarChar(255)
@@ -391,6 +385,18 @@ model youtube_videos {
   @@index([channel_id], map: "channel_id")
   @@index([published_at], map: "published_at")
   @@index([type_id], map: "type_id")
+}
+
+model logs {
+  id         String   @id @db.VarChar(255)
+  operation  String   @db.VarChar(255)
+  user       String   @db.VarChar(255)
+  parameters String   @db.Text
+  created_at DateTime @default(now()) @db.DateTime(0)
+}
+
+model event_youtube_videos {
+  id Int @id @default(autoincrement())
 }
 
 enum events_type {

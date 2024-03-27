@@ -2,6 +2,7 @@
 
 import { listArtists } from '@/db/artists'
 import { Event, EventCredit, eventCreditsTag, listEventCredits } from '@/db/events'
+import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAssociateUserServer } from '@/utils/amplify'
 import { Errors } from '@/utils/errors'
@@ -58,19 +59,29 @@ export const updateCredit = async (state: State, data: FormData): Promise<State>
 
 const extractRowData = async (data: FormData, i: number) => {
   const id = parseInt(data.get(`id[${i}]`) as string)
+  const display_order = parseInt(data.get(`display_order[${i}]`) as string)
   const artist_id = parseInt(data.get(`artist_id[${i}]`) as string)
   const title = data.get(`title[${i}]`) as string
   const name = data.get(`name[${i}]`) as string
   const source_url = data.get(`source_url[${i}]`) as string
-  if (isNaN(id) || isNaN(artist_id) || !title || title === '') {
+  if (
+    isNaN(id) ||
+    isNaN(display_order) ||
+    isNaN(artist_id) ||
+    !title ||
+    title === '' ||
+    !source_url ||
+    source_url === ''
+  ) {
     return undefined
   } else {
     return {
       id,
+      display_order,
       artist_id,
       title,
       name: name === '' ? null : name,
-      source_url: source_url === '' ? null : source_url,
+      source_url,
     }
   }
 }
@@ -87,15 +98,21 @@ const updateRow = async (
   } else {
     try {
       if (row.id < 0) {
-        const res = await prisma.event_credits.create({
+        const params = {
           data: {
             event_id,
+            display_order: row.display_order,
             artist_id: row.artist_id,
             title: row.title,
             name: row.name,
             source_url: row.source_url,
           },
-        })
+        }
+        const res = await executeQueryWithLogging(
+          prisma.event_credits.create(params),
+          'event_credits.create',
+          params
+        )
         revalidateTag(eventCreditsTag(event_id))
         return {
           credits: [
@@ -103,25 +120,32 @@ const updateRow = async (
             res,
             {
               id: -1 * (state.credits.length + 1),
+              display_order: state.credits.length + 1,
               artist_id: -1,
               title: '',
               name: null,
-              source_url: null,
+              source_url: '',
             } as EventCredit,
           ],
           error: undefined,
         }
       } else {
-        const res = await prisma.event_credits.update({
+        const params = {
           where: { id: row.id },
           data: {
             event_id,
+            display_order: row.display_order,
             artist_id: row.artist_id,
             title: row.title,
             name: row.name,
             source_url: row.source_url,
           },
-        })
+        }
+        const res = await executeQueryWithLogging(
+          prisma.event_credits.update(params),
+          'event_credits.update',
+          params
+        )
         revalidateTag(eventCreditsTag(event_id))
         return {
           credits: [
@@ -151,7 +175,12 @@ const deleteRow = async (
   } else {
     try {
       if (row.id > 0) {
-        await prisma.event_credits.delete({ where: { id: row.id } })
+        const params = { where: { id: row.id } }
+        await executeQueryWithLogging(
+          prisma.event_credits.delete(params),
+          'event_credits.delete',
+          params
+        )
         revalidateTag(eventCreditsTag(event_id))
       }
       return {

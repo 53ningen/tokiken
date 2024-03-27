@@ -186,6 +186,9 @@ export const listEventCredits = (eventId: number) =>
         where: {
           event_id: eventId,
         },
+        orderBy: {
+          display_order: 'asc',
+        },
       })
       return credits
     },

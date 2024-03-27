@@ -20,11 +20,12 @@ const EventCreditEditor = ({ event, artists, credits }: Props) => {
       ...credits,
       {
         id: -1 * (credits.length + 1),
+        display_order: credits.length + 1,
         event_id: event.id,
         title: '',
         artist_id: -1,
         name: null,
-        source_url: null,
+        source_url: '',
       } as EventCredit,
     ],
     error: undefined,
@@ -38,6 +39,7 @@ const EventCreditEditor = ({ event, artists, credits }: Props) => {
           <table className="w-full [&_td]:px-1">
             <thead className="text-center text-sm text-gray-500 font-bold">
               <tr>
+                <td>表示順</td>
                 <td>タイトル（必須）</td>
                 <td>アーティスト（必須）</td>
                 <td>クレジット名</td>
@@ -46,30 +48,33 @@ const EventCreditEditor = ({ event, artists, credits }: Props) => {
                 <td></td>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-sm">
               {state.credits.map((credit, i) => {
                 return (
                   <tr key={credit.id}>
                     <td>
                       <input
-                        type="hidden"
-                        required
-                        name={`id[${i}]`}
-                        value={credit.id}
-                        className="border rounded py-1 px-2 w-24"
+                        type="number"
+                        name={`display_order[${i}]`}
+                        tabIndex={-1}
+                        defaultValue={credit.display_order}
+                        className="border rounded py-1 px-2 w-12"
                       />
+                    </td>
+                    <td>
+                      <input type="hidden" required name={`id[${i}]`} value={credit.id} />
                       <input
                         type="text"
                         name={`title[${i}]`}
                         defaultValue={credit.title}
-                        className="border rounded py-1 px-2 w-24"
+                        className="border rounded py-1 px-2 w-28"
                       />
                     </td>
                     <td>
                       <select
                         name={`artist_id[${i}]`}
                         defaultValue={credit.artist_id}
-                        className="border rounded py-1 px-2 overflow-x-hidden text-ellipsis">
+                        className="border rounded py-1 px-2 w-full overflow-x-hidden text-ellipsis">
                         <option value=""></option>
                         {artists.map((artist) => (
                           <option key={artist.id} value={artist.id}>
@@ -82,8 +87,9 @@ const EventCreditEditor = ({ event, artists, credits }: Props) => {
                       <input
                         type="text"
                         name={`name[${i}]`}
+                        tabIndex={-1}
                         defaultValue={credit.name || undefined}
-                        className="border rounded py-1 px-2 max-w-32"
+                        className="border rounded py-1 px-2 w-28 max-w-32"
                         placeholder="null"
                       />
                     </td>
@@ -101,7 +107,6 @@ const EventCreditEditor = ({ event, artists, credits }: Props) => {
                         name="action"
                         value={`update:${i}`}
                         type="submit"
-                        tabIndex={-1}
                         actionType="update">
                         {credit.id < 0 ? '追加' : '更新'}
                       </ActionButton>
