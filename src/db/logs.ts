@@ -23,3 +23,24 @@ export const executeQueryWithLogging = async (
   ])
   return res
 }
+
+export const executeQueriesWithLogging = async (
+  ps: PrismaPromise<any>[],
+  operation: string,
+  params: any
+) => {
+  const authUser = await AuthGetCurrentUserServer()
+  const user = authUser!.userId
+  const [res, _] = await prisma.$transaction([
+    ...ps,
+    prisma.logs.create({
+      data: {
+        id: ulid(),
+        user,
+        operation,
+        parameters: JSON.stringify(params),
+      },
+    }),
+  ])
+  return res
+}

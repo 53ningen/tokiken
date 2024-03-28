@@ -7,6 +7,7 @@ import { listSongs } from '@/db/songs'
 import { isAssociateUserServer } from '@/utils/amplify'
 import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
+import EventSetlistBulkEditorWrapper from './EventSetlistBulkEditorWrapper'
 import EventSetlistEditor from './EventSetlistEditor'
 
 interface Props {
@@ -15,7 +16,12 @@ interface Props {
 
 const EventSetlistEditorWrapper = async ({ event }: Props) => {
   const [songs, setlists] = await Promise.all([listSongs(), listEventSetlist(event.id)()])
-  return <EventSetlistEditor event={event} songs={songs} setlist={setlists} />
+  return (
+    <div className="flex flex-col gap-4">
+      {setlists.length === 0 && <EventSetlistBulkEditorWrapper event={event} />}
+      <EventSetlistEditor event={event} songs={songs} setlist={setlists} />
+    </div>
+  )
 }
 
 export default EventSetlistEditorWrapper

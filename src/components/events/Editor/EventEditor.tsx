@@ -36,7 +36,7 @@ const EventEditor = ({ event, places }: Props) => {
           required
           type="text"
           autoComplete="off"
-          className="border rounded grow py-1 px-3"
+          className="border rounded w-full py-1 px-3"
         />
       </FormItem>
       <FormItem id="type" label="イベントタイプ*">
