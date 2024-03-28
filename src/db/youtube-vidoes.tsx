@@ -134,3 +134,48 @@ export const listYouTubeVideosByCostume = (costumeId: number) =>
     [`youtube-videos-by-costume-${costumeId}`],
     { tags: [`youtube-videos-by-costume-${costumeId}`] }
   )
+
+export const youTubeVideosByWordTag = (word: string) => `youtube-videos-word-${word}`
+export const searchYouTubeVideosByWord = (word: string) =>
+  unstable_cache(
+    async () => {
+      const videos = await prisma.youtube_videos.findMany({
+        where: {
+          title: {
+            contains: word,
+          },
+        },
+        orderBy: {
+          published_at: 'asc',
+        },
+      })
+      return videos
+    },
+    [youTubeVideosByWordTag(word)],
+    { tags: [youTubeVideosByWordTag(word)] }
+  )
+
+export const youtubeVideosByDateTag = (date: string) =>
+  `youtube-videos-date-${date.slice(0, 7)}`
+export const searchYouTubeVideosByDate = (date: string) =>
+  unstable_cache(
+    async () => {
+      const prev = new Date(date)
+      prev.setMonth(prev.getMonth() - 1)
+      const next = new Date(date)
+      next.setMonth(next.getMonth() + 1)
+      const videos = await prisma.youtube_videos.findMany({
+        where: {
+          OR: [
+            { published_at: { startsWith: prev.toISOString().slice(0, 7) } },
+            { published_at: { startsWith: date.slice(0, 7) } },
+            { published_at: { startsWith: next.toISOString().slice(0, 7) } },
+          ],
+        },
+        orderBy: { published_at: 'asc' },
+      })
+      return videos
+    },
+    [youtubeVideosByDateTag(date)],
+    { tags: [youtubeVideosByDateTag(date)] }
+  )

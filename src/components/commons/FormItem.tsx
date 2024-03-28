@@ -12,7 +12,7 @@ const FormItem = ({ id, label, children, className, ...props }: Props) => {
       <label htmlFor={id} className="block font-bold w-36">
         {label}
       </label>
-      {children}
+      <div className="w-full">{children}</div>
     </div>
   )
 }

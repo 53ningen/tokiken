@@ -11,12 +11,14 @@ import EventEditorNavigation from '@/components/events/Editor/EventEditorNavigat
 import { EventEditorWrapper } from '@/components/events/Editor/EventEditorWrapper'
 import EventSetlistEditorWrapper from '@/components/events/Editor/EventSetlistEditorWrapper'
 import EventTweetEditorWrapper from '@/components/events/Editor/EventTweetEditorWrapper'
+import EventYouTubeVideoEditorWrapper from '@/components/events/Editor/EventYouTubeVideoEditorWrapper'
 import EventArticleList from '@/components/events/EventArticleList'
 import EventCostumeList from '@/components/events/EventCostumeList'
 import EventInfo from '@/components/events/EventInfo'
 import EventNote from '@/components/events/EventNote'
 import EventSetList from '@/components/events/EventSetList'
 import EventTweetList from '@/components/events/EventTweetList'
+import EventYouTubeVideoList from '@/components/events/EventYouTubeVideoList'
 import { getEvent } from '@/db/events'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -108,7 +110,10 @@ const EventEdit = async ({ params }: Props) => {
         </div>
         <div>
           <SectionHeading title="📝 関連 YouTube 動画" />
-          <Preview></Preview>
+          <EventYouTubeVideoEditorWrapper event={event} />
+          <Preview>
+            <EventYouTubeVideoList event={event} />
+          </Preview>
         </div>
         <div>
           <SectionHeading title="📝 関連ツイート" />
@@ -116,10 +121,6 @@ const EventEdit = async ({ params }: Props) => {
           <Preview>
             <EventTweetList event={event} />
           </Preview>
-        </div>
-        <div>
-          <SectionHeading title="📝 写真" />
-          <Preview></Preview>
         </div>
       </div>
     </Container>

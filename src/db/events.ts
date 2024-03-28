@@ -163,7 +163,7 @@ export const listEventTweets = (eventId: number) =>
         },
         orderBy: {
           tweets: {
-            published_at: 'desc',
+            published_at: 'asc',
           },
         },
       })
@@ -242,5 +242,30 @@ export const listEventArticles = (eventId: number) =>
     [eventArticlesTag(eventId)],
     {
       tags: [eventArticlesTag(eventId)],
+    }
+  )
+
+export const eventYouTubeVideosTag = (eventId: number) =>
+  `event-youtube-videos-${eventId}`
+export const listEventYouTubeVideos = (eventId: number) =>
+  unstable_cache(
+    async () => {
+      const videos = await prisma.youtube_videos.findMany({
+        where: {
+          event_youtube_videos: {
+            some: {
+              event_id: eventId,
+            },
+          },
+        },
+        orderBy: {
+          published_at: 'asc',
+        },
+      })
+      return videos
+    },
+    [eventYouTubeVideosTag(eventId)],
+    {
+      tags: [eventYouTubeVideosTag(eventId)],
     }
   )

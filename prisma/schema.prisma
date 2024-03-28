@@ -47,6 +47,7 @@ model blogs {
   published_at  String        @db.VarChar(255)
   thumbnail_url String?       @db.VarChar(255)
   author        blogs_author?
+  event_blogs   event_blogs[]
 
   @@index([author], map: "author")
   @@index([published_at], map: "published_at")
@@ -73,7 +74,7 @@ model costume_tweets {
   id         Int      @id @default(autoincrement())
   costume_id Int
   tweet_id   String   @db.VarChar(255)
-  costumes   costumes @relation(fields: [costume_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costume_tweets_ibfk_1")
+  costumes   costumes @relation(fields: [costume_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costume_tweets_ibfk_2")
   tweets     tweets   @relation(fields: [tweet_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "costume_tweets_ibfk_3")
 
   @@index([costume_id], map: "costume_id")
@@ -104,14 +105,24 @@ model event_articles {
   id         Int      @id @default(autoincrement())
   event_id   Int
   article_id Int
-  events     events   @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_1")
-  articles   articles @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_2")
+  events     events   @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
+  articles   articles @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_6")
 
   @@index([event_id], map: "fk_1")
   @@index([article_id], map: "fk_2")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model event_blogs {
+  id       Int    @id @default(autoincrement())
+  event_id Int
+  blog_id  Int
+  events   events @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_1")
+  blogs    blogs  @relation(fields: [blog_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_2")
+
+  @@index([event_id], map: "fk_1")
+  @@index([blog_id], map: "fk_2")
+}
+
 model event_casts {
   id       String @id @db.VarChar(255)
   event_id Int
@@ -183,25 +194,46 @@ model event_tweets {
   @@index([tweet_id], map: "tweet_id")
 }
 
+model event_youtube_videos {
+  id             Int            @id @default(autoincrement())
+  event_id       Int
+  video_id       String         @db.VarChar(255)
+  events         events         @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_3")
+  youtube_videos youtube_videos @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_4")
+
+  @@index([event_id], map: "fk_1")
+  @@index([video_id], map: "fk_2")
+}
+
 model events {
-  id              Int               @id @default(autoincrement())
-  title           String            @db.VarChar(255)
-  type            events_type
-  date            String            @db.VarChar(31)
-  start           String?           @db.VarChar(31)
-  place_id        Int?
-  note            String?           @db.Text
-  costumes        costumes[]
-  event_articles  event_articles[]
-  event_casts     event_casts[]
-  event_cosutumes event_cosutumes[]
-  event_credits   event_credits[]
-  event_setlist   event_setlist[]
-  event_tweets    event_tweets[]
-  event_places    event_places?     @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_ibfk_1")
+  id                   Int                    @id @default(autoincrement())
+  title                String                 @db.VarChar(255)
+  type                 events_type
+  date                 String                 @db.VarChar(31)
+  start                String?                @db.VarChar(31)
+  place_id             Int?
+  note                 String?                @db.Text
+  costumes             costumes[]
+  event_articles       event_articles[]
+  event_blogs          event_blogs[]
+  event_casts          event_casts[]
+  event_cosutumes      event_cosutumes[]
+  event_credits        event_credits[]
+  event_setlist        event_setlist[]
+  event_tweets         event_tweets[]
+  event_youtube_videos event_youtube_videos[]
+  event_places         event_places?          @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_ibfk_1")
 
   @@index([date], map: "date")
   @@index([place_id], map: "place_id")
+}
+
+model logs {
+  id         String   @id @db.VarChar(255)
+  user       String   @db.VarChar(255)
+  operation  String   @db.VarChar(255)
+  parameters String   @db.Text
+  created_at DateTime @default(now()) @db.DateTime(0)
 }
 
 model playground {
@@ -377,6 +409,7 @@ model youtube_videos {
   title                  String                   @db.VarChar(255)
   type_id                Int
   is_short               Boolean
+  event_youtube_videos   event_youtube_videos[]
   youtube_video_costumes youtube_video_costumes[]
   youtube_video_songs    youtube_video_songs[]
   youtube_channels       youtube_channels         @relation(fields: [channel_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "youtube_videos_ibfk_1")
@@ -385,18 +418,6 @@ model youtube_videos {
   @@index([channel_id], map: "channel_id")
   @@index([published_at], map: "published_at")
   @@index([type_id], map: "type_id")
-}
-
-model logs {
-  id         String   @id @db.VarChar(255)
-  operation  String   @db.VarChar(255)
-  user       String   @db.VarChar(255)
-  parameters String   @db.Text
-  created_at DateTime @default(now()) @db.DateTime(0)
-}
-
-model event_youtube_videos {
-  id Int @id @default(autoincrement())
 }
 
 enum events_type {
@@ -430,11 +451,6 @@ enum record_tracks_type {
   VR
 }
 
-enum annual_events_category {
-  ANNIVERSARY
-  BIRTHDAY
-}
-
 enum blogs_author {
   kanami
   julia
@@ -446,6 +462,11 @@ enum blogs_author {
   mako
   sara
   banbi
+}
+
+enum annual_events_category {
+  ANNIVERSARY
+  BIRTHDAY
 }
 
 enum costumes_type {
