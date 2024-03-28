@@ -6,4 +6,5 @@ export const Errors = {
   DatabaseError: { message: 'データベースエラーが発生しました' },
   NotFound: { message: 'リソースが見つかりません' },
   NotAuthorized: { message: '権限がありません' },
+  AlreadyExists: { message: '既に登録されています' },
 }

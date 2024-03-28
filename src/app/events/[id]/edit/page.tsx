@@ -9,7 +9,6 @@ import { EventCostumeEditorWrapper } from '@/components/events/Editor/EventCostu
 import EventCreditEditorWrapper from '@/components/events/Editor/EventCreditEditorWrapper'
 import EventEditorNavigation from '@/components/events/Editor/EventEditorNavigation'
 import { EventEditorWrapper } from '@/components/events/Editor/EventEditorWrapper'
-import EventNoteEditor from '@/components/events/Editor/EventNoteEditor'
 import EventSetlistEditorWrapper from '@/components/events/Editor/EventSetlistEditorWrapper'
 import EventTweetEditorWrapper from '@/components/events/Editor/EventTweetEditorWrapper'
 import EventArticleList from '@/components/events/EventArticleList'
@@ -75,8 +74,11 @@ const EventEdit = async ({ params }: Props) => {
           <EventEditorWrapper event={event} />
           <EventCastEditorWrapper event={event} />
           <EventCreditEditorWrapper event={event} />
-          <Preview>
+          <Preview title="基本情報">
             <EventInfo event={event} />
+          </Preview>
+          <Preview title="メモ">
+            <EventNote event={event} />
           </Preview>
         </div>
         <div>
@@ -113,13 +115,6 @@ const EventEdit = async ({ params }: Props) => {
           <EventTweetEditorWrapper event={event} />
           <Preview>
             <EventTweetList event={event} />
-          </Preview>
-        </div>
-        <div>
-          <SectionHeading title="📝 イベントメモ" />
-          <EventNoteEditor event={event} />
-          <Preview>
-            <EventNote event={event} />
           </Preview>
         </div>
         <div>

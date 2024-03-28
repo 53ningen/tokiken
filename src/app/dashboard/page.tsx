@@ -14,7 +14,7 @@ const Dashboard = () => {
       <div className="grid gap-8 text-left [&_a]:text-primary">
         <div className="flex flex-col">
           <SectionHeading title="各種データ管理" />
-          <Link href="/events/edit">🏟️ イベント/イベント会場データ管理</Link>
+          <Link href="/events/add">🏟️ イベント/イベント会場データ追加</Link>
           <Link href="/youtube/edit">🎬 YouTube データ管理</Link>
         </div>
         <RevalidateTagForm />
