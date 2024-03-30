@@ -1,3 +1,4 @@
+import AuthContainer from '@/components/commons/AuthContainer'
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
 import Title from '@/components/commons/Title'
@@ -11,7 +12,9 @@ import EventSetList from '@/components/events/EventSetList'
 import EventTweetList from '@/components/events/EventTweetList'
 import EventYouTubeVideoList from '@/components/events/EventYouTubeVideoList'
 import { getEvent } from '@/db/events'
+import { PencilIcon } from '@heroicons/react/24/solid'
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface Props {
@@ -60,6 +63,12 @@ const Event = async ({ params }: Props) => {
         items={[{ name: '超ときめき♡カレンダー', href: `/calendar/${yyyymm}` }]}
       />
       <Title title={event.title || ''} />
+      <AuthContainer>
+        <div className="flex gap-1 items-center text-primary font-bold pb-4">
+          <PencilIcon className="w-4 h-4" />
+          <Link href={`/events/${event.id}/edit`}>このイベントを編集する</Link>
+        </div>
+      </AuthContainer>
       <EventInfo event={event} />
       <EventNote event={event} />
       <div className="grid gap-8 py-8">
