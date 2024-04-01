@@ -2,9 +2,11 @@
 
 import { TokisenRegimes } from '@/consts/tokisen'
 import { Event, EventCast, eventCastsTag, listEventCasts } from '@/db/events'
+import { executeQueriesWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAssociateUserServer } from '@/utils/amplify'
 import { Either, left, right } from '@/utils/either'
+import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 import EventCastEditor from './EventCastEditor'
 
@@ -23,7 +25,7 @@ export const updateCasts = async (
   data: FormData
 ): Promise<Either<string, EventCast[]>> => {
   if (!(await isAssociateUserServer())) {
-    return left('ログインが必要です')
+    return left(Errors.NeedAssociatePermission.message)
   }
 
   const eventId = Number(data.get('event_id'))
@@ -52,20 +54,22 @@ export const updateCasts = async (
           continue
         } else if (exists) {
           // レコードが存在しているがチェックボックスがオフならば削除
-          await prisma.event_casts.delete({
+          const params = {
             where: {
               id: `${eventId}/${name}`,
             },
-          })
+          }
+          await prisma.event_casts.delete(params)
         } else {
           // レコードが存在していないがチェックボックスがオンならば追加
-          const r = await prisma.event_casts.create({
+          const params = {
             data: {
               id: `${eventId}/${name}`,
               event_id: eventId,
               name: name,
             },
-          })
+          }
+          const r = await prisma.event_casts.create(params)
           records.push(r)
         }
       }
@@ -75,7 +79,7 @@ export const updateCasts = async (
     return right(res)
   } catch (e) {
     console.error(e)
-    return left('データベースエラー')
+    return left(Errors.DatabaseError.message)
   }
 }
 
@@ -84,11 +88,11 @@ export const insertCasts = async (
   ...names: string[]
 ): Promise<Either<string, EventCast[]>> => {
   if (!(await isAssociateUserServer())) {
-    return left('ログインが必要です')
+    return left(Errors.NeedAssociatePermission.message)
   }
   try {
-    const promises = names.map((name) =>
-      prisma.event_casts.upsert({
+    const params = names.map((name) => {
+      return {
         where: {
           id: `${eventId}/${name}`,
         },
@@ -98,12 +102,17 @@ export const insertCasts = async (
           name: name,
         },
         update: {},
-      })
+      }
+    })
+    const promises = params.map((p) => prisma.event_casts.upsert(p))
+    const res = await executeQueriesWithLogging(
+      promises,
+      'event_casts.bulk_upsert',
+      params
     )
-    const res = await prisma.$transaction(promises)
     revalidateTag(eventCastsTag(eventId))
     return right(res)
   } catch (e) {
-    return left('データベースエラー')
+    return left(Errors.DatabaseError.message)
   }
 }

@@ -1,9 +1,11 @@
 'use server'
 
 import { Event, EventType, listEventPlaces } from '@/db/events'
+import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAdminUserServer, isAssociateUserServer } from '@/utils/amplify'
 import { Either, left, right } from '@/utils/either'
+import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 import EventEditor from './EventEditor'
 
@@ -39,9 +41,9 @@ export const createEvent = async (data: FormData): Promise<Either<string, Event>
       },
     })
     if (exists) {
-      return left(`event already exists: ${title}`)
+      return left(Errors.AlreadyExists.message)
     }
-    const event = await prisma.events.create({
+    const params = {
       data: {
         title,
         type,
@@ -49,7 +51,12 @@ export const createEvent = async (data: FormData): Promise<Either<string, Event>
         start,
         place_id,
       },
-    })
+    }
+    const event = await executeQueryWithLogging(
+      prisma.events.create(params),
+      'events.create',
+      params
+    )
     const yyyymm = new Date(date).toISOString().slice(0, 7)
     revalidateTag(`events-${yyyymm}`)
     return right(event)
@@ -75,7 +82,7 @@ export const updateEvent = async (data: FormData): Promise<Either<string, Event>
     return left('invalid data')
   }
   try {
-    const event = await prisma.events.update({
+    const params = {
       data: {
         title,
         type,
@@ -86,7 +93,12 @@ export const updateEvent = async (data: FormData): Promise<Either<string, Event>
       where: {
         id,
       },
-    })
+    }
+    const event = await executeQueryWithLogging(
+      prisma.events.update(params),
+      'events.update',
+      params
+    )
     const yyyymm = new Date(date).toISOString().slice(0, 7)
     revalidateTag(`events-${yyyymm}`)
     revalidateTag(`event-${id}`)

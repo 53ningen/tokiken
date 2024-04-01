@@ -1,15 +1,17 @@
 'use server'
 
+import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAdminUserServer } from '@/utils/amplify'
 import { Either, left, right } from '@/utils/either'
+import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 
 export const createEventPlace = async (
   data: FormData
 ): Promise<Either<string, string>> => {
   if (!(await isAdminUserServer())) {
-    return left('Administrator permission required, please contact with @kusabure.')
+    return left(Errors.NeedAdminPermission.message)
   }
 
   const name = data.get('name') as string
@@ -21,7 +23,7 @@ export const createEventPlace = async (
   }
   const kanaIsHiragana = /^[a-zA-Z0-9ぁ-んー－]+$/.test(kana)
   if (!kanaIsHiragana) {
-    return left(`kana contains non-hiragana character: ${kana}`)
+    return left(Errors.InvalidRequest.message)
   }
 
   try {
@@ -31,20 +33,25 @@ export const createEventPlace = async (
       },
     })
     if (exists) {
-      return left(`event place already exists: ${name}`)
+      return left(Errors.AlreadyExists.message)
     }
-    const res = await prisma.event_places.create({
+    const params = {
       data: {
         name,
         kana,
         region,
         address,
       },
-    })
+    }
+    const res = await executeQueryWithLogging(
+      prisma.event_places.create(params),
+      'event_places.create',
+      params
+    )
     revalidateTag('event-places')
     return right(`created: ${JSON.stringify(res)}`)
   } catch (e) {
     console.log(e)
-    return left(`create failed`)
+    return left(Errors.DatabaseError.message)
   }
 }

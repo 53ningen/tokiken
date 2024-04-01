@@ -30,21 +30,22 @@ export async function AuthGetCurrentUserServer() {
   }
 }
 
-export async function isAdminUserServer() {
+export async function groupsServer() {
   const { tokens } = await runWithAmplifyServerContext({
     nextServerContext: { cookies },
     operation: (contextSpec) => fetchAuthSession(contextSpec),
   })
   const groups = tokens?.idToken?.payload[`cognito:groups`] as string[] | undefined
+  return groups || []
+}
+
+export async function isAdminUserServer() {
+  const groups = await groupsServer()
   return groups?.includes('administrators') || false
 }
 
 export async function isAssociateUserServer() {
-  const { tokens } = await runWithAmplifyServerContext({
-    nextServerContext: { cookies },
-    operation: (contextSpec) => fetchAuthSession(contextSpec),
-  })
-  const groups = tokens?.idToken?.payload[`cognito:groups`] as string[] | undefined
+  const groups = await groupsServer()
   return groups?.includes('administrators') || groups?.includes('associates') || false
 }
 
