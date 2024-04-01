@@ -9,49 +9,52 @@ interface Props {
 }
 
 const CalendarDateDropdown = ({ date }: Props) => {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const currentMonthYYYY = date.getFullYear()
-  const currentMonthMM = (date.getMonth() + 1).toString().padStart(2, '0')
   const now = new Date()
-
-  // 2015/04 〜 current month
-  const dates = Array.from(
-    { length: (now.getFullYear() - 2015) * 12 + now.getMonth() + 1 },
-    (_, i) => {
-      const y = Math.floor(i / 12) + 2015
-      const m = (i % 12) + 1
-      return new Date(y, m - 1, 1)
-    }
+  const years = Array.from(
+    { length: now.getFullYear() - 2015 + 1 },
+    (_, i) => now.getFullYear() - i
   )
-    .filter((d) => !(d.getFullYear() === 2015 && d.getMonth() < 3))
-    .reverse()
+  const months = Array.from({ length: 12 }, (_, i) => 12 - i)
+
+  const [year, setYear] = useState(date.getFullYear().toString())
+  const [month, setMonth] = useState((date.getMonth() + 1).toString())
+  const changed = () => {
+    return (
+      year !== date.getFullYear().toString() || month !== (date.getMonth() + 1).toString()
+    )
+  }
   return (
-    <div
-      className="relative inline-block text-left"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex gap-2 text-gray-500 font-bold items-center">
-        <CalendarIcon className="h-5 w-5" />
-        {currentMonthYYYY}/{currentMonthMM}
-      </button>
-      {isHovered && (
-        <div className="absolute grid w-32 max-h-48 overflow-y-scroll pt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg z-50 text-center">
-          {dates.map((date) => {
-            const yyyy = date.getFullYear()
-            const mm = (date.getMonth() + 1).toString().padStart(2, '0')
-            return (
-              <Link
-                key={`${yyyy}/${mm}`}
-                href={`/calendar/${yyyy}${mm}`}
-                prefetch={false}
-                className="p-2">
-                {yyyy}/{mm}
-              </Link>
-            )
-          })}
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-1 justify-center items-center text-gray-500">
+        <select name="year" value={year} onChange={(e) => setYear(e.currentTarget.value)}>
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+        <span>/</span>
+        <select
+          name="month"
+          value={month}
+          onChange={(e) => setMonth(e.currentTarget.value)}>
+          {months
+            .filter((m) => (year === '2015' ? m >= 4 : true))
+            .map((m) => (
+              <option key={m} value={m}>
+                {m.toString().padStart(2, '0')}
+              </option>
+            ))}
+        </select>
+      </div>
+      {changed() && (
+        <div>
+          <Link
+            href={`/calendar/${year}${month.toString().padStart(2, '0')}`}
+            className="flex gap-2 text-primary border rounded px-3 py-1">
+            <CalendarIcon className="h-5 w-5" />
+            {year}/{month.toString().padStart(2, '0')} のカレンダーを開く
+          </Link>
         </div>
       )}
     </div>
