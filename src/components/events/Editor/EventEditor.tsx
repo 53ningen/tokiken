@@ -114,7 +114,7 @@ const EventEditor = ({ event, places }: Props) => {
           id="note"
           name="note"
           placeholder="null"
-          className="border rounded grow py-1 px-3"
+          className="w-full border rounded grow py-1 px-3"
         />
       </FormItem>
       {state.error && <Alert type="error" message={state.error} />}

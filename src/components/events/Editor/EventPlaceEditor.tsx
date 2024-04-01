@@ -1,4 +1,5 @@
 'use client'
+import FormItem from '@/components/commons/FormItem'
 import { prefectures } from '@/consts/region'
 import { Either } from '@/utils/either'
 import { useRef, useState } from 'react'
@@ -17,36 +18,27 @@ const EventPlaceEditor = () => {
         }}
         className="grid gap-2"
         ref={ref}>
-        <div className="flex items-center">
-          <label htmlFor="name" className="block font-bold w-32">
-            会場名
-          </label>
+        <FormItem id="name" label="会場名*">
           <input
             id="name"
             name="name"
             required
             type="text"
             autoComplete="off"
-            className="border rounded w-64 py-1 px-3"
+            className="w-full border rounded py-1 px-3"
           />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="kana" className="block font-bold w-32">
-            会場名かな
-          </label>
+        </FormItem>
+        <FormItem id="kana" label="会場名かな*">
           <input
             id="kana"
             name="kana"
             required
             type="text"
             autoComplete="off"
-            className="border rounded w-64 py-1 px-3"
+            className="w-full border rounded py-1 px-3"
           />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="region" className="block font-bold w-32">
-            都道府県/国・地域
-          </label>
+        </FormItem>
+        <FormItem id="region" label="都道府県/地域*">
           <input
             id="region"
             name="region"
@@ -63,25 +55,22 @@ const EventPlaceEditor = () => {
               </option>
             ))}
           </datalist>
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="address" className="block font-bold w-32">
-            住所
-          </label>
+        </FormItem>
+        <FormItem id="address" label="住所*">
           <input
             id="address"
             name="address"
             required
             type="text"
             autoComplete="off"
-            className="border rounded w-64 py-1 px-3"
+            className="w-full border rounded py-1 px-3"
           />
-        </div>
-        <div>
+        </FormItem>
+        <div className="text-right">
           <button
             type="submit"
             className="bg-blue-500 text-white py-1 px-4 rounded inline-block">
-            イベント会場データ追加
+            イベント会場情報作成
           </button>
         </div>
       </form>

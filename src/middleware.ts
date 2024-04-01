@@ -25,12 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/dashboard',
-    '/events/add',
-    '/events/:id/edit',
-    '/costumes/edit',
-    '/costumes/:id/edit',
-    '/youtube/edit',
-  ],
+  matcher: ['/dashboard', '/events/:id/edit', '/costumes/:id/edit'],
 }
