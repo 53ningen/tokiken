@@ -4,6 +4,7 @@ import { AnnualEvent } from '@/db/annual-events'
 import { Blog } from '@/db/blogs'
 import { Event } from '@/db/events'
 import { numToMMDD, numToYYYYMMDD } from '@/utils/datetime'
+import { CalendarLocalStorageKeys, LocalStorage } from '@/utils/local-storage'
 import { useState } from 'react'
 import CalendarCell from './CalendarCell'
 import CalendarNavigation from './CalendarNavigation'
@@ -17,7 +18,11 @@ interface Props {
 }
 
 const CalendarBody = ({ year, month, events, annualEvents, blogs }: Props) => {
-  const [showBlogTitles, setShowBlogTitles] = useState(false)
+  const showBlogTitlesInit = (() => {
+    const value = LocalStorage.getItem(CalendarLocalStorageKeys.showBlogTitles)
+    return value ? value === '1' : true
+  })()
+  const [showBlogTitles, setShowBlogTitles] = useState<boolean>(showBlogTitlesInit)
   const daysOfTheMonth = new Date(year, month, 0).getDate()
   const days = Array.from({ length: daysOfTheMonth }, (_, i) => i + 1)
   return (
@@ -26,15 +31,20 @@ const CalendarBody = ({ year, month, events, annualEvents, blogs }: Props) => {
       <div className="flex items-center gap-2 pb-4 mb-2 text-left text-gray-500 text-sm">
         <>
           <input
+            id="show-blog-titles"
             type="checkbox"
             checked={showBlogTitles}
-            onChange={(e) => setShowBlogTitles(e.currentTarget.checked)}
+            onChange={(e) => {
+              setShowBlogTitles(e.currentTarget.checked)
+              LocalStorage.setItem(
+                CalendarLocalStorageKeys.showBlogTitles,
+                e.currentTarget.checked ? '1' : '0'
+              )
+            }}
           />
-          <span
-            className="select-none cursor-pointer"
-            onClick={() => setShowBlogTitles((v) => !v)}>
+          <label htmlFor="show-blog-titles" className="select-none cursor-pointer">
             ブログタイトルを表示
-          </span>
+          </label>
         </>
       </div>
       <div className="grid gap-4">
