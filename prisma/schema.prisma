@@ -47,7 +47,6 @@ model blogs {
   published_at  String        @db.VarChar(255)
   thumbnail_url String?       @db.VarChar(255)
   author        blogs_author?
-  event_blogs   event_blogs[]
 
   @@index([author], map: "author")
   @@index([published_at], map: "published_at")
@@ -105,22 +104,11 @@ model event_articles {
   id         Int      @id @default(autoincrement())
   event_id   Int
   article_id Int
-  events     events   @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_5")
-  articles   articles @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_6")
+  events     events   @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_7")
+  articles   articles @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_8")
 
-  @@index([event_id], map: "fk_1")
-  @@index([article_id], map: "fk_2")
-}
-
-model event_blogs {
-  id       Int    @id @default(autoincrement())
-  event_id Int
-  blog_id  Int
-  events   events @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_1")
-  blogs    blogs  @relation(fields: [blog_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_2")
-
-  @@index([event_id], map: "fk_1")
-  @@index([blog_id], map: "fk_2")
+  @@index([article_id], map: "article_id")
+  @@index([event_id], map: "event_id")
 }
 
 model event_casts {
@@ -169,15 +157,16 @@ model event_places {
 }
 
 model event_setlist {
-  id         Int     @id @default(autoincrement())
-  event_id   Int
-  order      Int
-  song_id    Int?
-  song_title String? @db.VarChar(255)
-  note       String? @db.Text
-  source_url String? @db.VarChar(255)
-  events     events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_1")
-  songs      songs?  @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_2")
+  id          Int     @id @default(autoincrement())
+  event_id    Int
+  order       Int
+  order_label String? @db.VarChar(255)
+  song_id     Int?
+  song_title  String? @db.VarChar(255)
+  encore      Boolean @default(false)
+  note        String? @db.Text
+  events      events  @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_1")
+  songs       songs?  @relation(fields: [song_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_setlist_ibfk_2")
 
   @@index([event_id], map: "event_id")
   @@index([song_id], map: "song_id")
@@ -215,7 +204,6 @@ model events {
   note                 String?                @db.Text
   costumes             costumes[]
   event_articles       event_articles[]
-  event_blogs          event_blogs[]
   event_casts          event_casts[]
   event_cosutumes      event_cosutumes[]
   event_credits        event_credits[]
@@ -223,6 +211,7 @@ model events {
   event_tweets         event_tweets[]
   event_youtube_videos event_youtube_videos[]
   event_places         event_places?          @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_ibfk_1")
+  setlist_credit       setlist_credit[]
 
   @@index([date], map: "date")
   @@index([place_id], map: "place_id")
@@ -420,6 +409,16 @@ model youtube_videos {
   @@index([type_id], map: "type_id")
 }
 
+model setlist_credit {
+  id         Int    @id @default(autoincrement())
+  event_id   Int
+  name       String @db.VarChar(255)
+  source_url String @db.VarChar(255)
+  events     events @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_1")
+
+  @@index([event_id], map: "fk_1")
+}
+
 enum events_type {
   LIVE
   EVENT
@@ -451,6 +450,11 @@ enum record_tracks_type {
   VR
 }
 
+enum annual_events_category {
+  ANNIVERSARY
+  BIRTHDAY
+}
+
 enum blogs_author {
   kanami
   julia
@@ -464,19 +468,14 @@ enum blogs_author {
   banbi
 }
 
-enum annual_events_category {
-  ANNIVERSARY
-  BIRTHDAY
+enum song_credits_source {
+  BOOKLET
+  JASRAC
+  EXTERNAL
 }
 
 enum costumes_type {
   tokisen
   chotokisen
   birthday
-}
-
-enum song_credits_source {
-  BOOKLET
-  JASRAC
-  EXTERNAL
 }

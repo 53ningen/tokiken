@@ -1,4 +1,5 @@
-import { Event, listEventSetlist } from '@/db/events'
+import { Event, getSetlistCredit, listEventSetlist } from '@/db/events'
+import Link from 'next/link'
 import SectionHeading from '../commons/SectionHeading'
 import EventSetlistItem from './EventSetlistItem'
 
@@ -8,9 +9,12 @@ interface Props {
 }
 
 const EventSetList = async ({ event, showHeading = false }: Props) => {
-  const setlist = await listEventSetlist(event.id)()
+  const [setlist, credit] = await Promise.all([
+    listEventSetlist(event.id)(),
+    getSetlistCredit(event.id)(),
+  ])
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {setlist.length > 0 && (
         <div>
           {showHeading && <SectionHeading title="🎵 セットリスト" />}
@@ -19,7 +23,19 @@ const EventSetList = async ({ event, showHeading = false }: Props) => {
           ))}
         </div>
       )}
-    </>
+      {credit && (
+        <div className="text-sm text-gray-500">
+          セットリスト出典:{' '}
+          <Link
+            href={credit.source_url}
+            className="text-primary"
+            target="_blank"
+            rel="noopener noreferrer">
+            {credit.name}
+          </Link>
+        </div>
+      )}
+    </div>
   )
 }
 

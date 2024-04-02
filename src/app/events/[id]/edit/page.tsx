@@ -12,6 +12,7 @@ import { EventEditorWrapper } from '@/components/events/Editor/EventEditorWrappe
 import EventSetlistEditorWrapper from '@/components/events/Editor/EventSetlistEditorWrapper'
 import EventTweetEditorWrapper from '@/components/events/Editor/EventTweetEditorWrapper'
 import EventYouTubeVideoEditorWrapper from '@/components/events/Editor/EventYouTubeVideoEditorWrapper'
+import SetlistCreditEditorWrapper from '@/components/events/Editor/SetlistCreditEditorServer'
 import EventArticleList from '@/components/events/EventArticleList'
 import EventCostumeList from '@/components/events/EventCostumeList'
 import EventInfo from '@/components/events/EventInfo'
@@ -85,6 +86,7 @@ const EventEdit = async ({ params }: Props) => {
         </div>
         <div>
           <SectionHeading title="🎵 セットリスト" />
+          <SetlistCreditEditorWrapper event={event} />
           <EventSetlistEditorWrapper event={event} />
           <Preview>
             <EventSetList event={event} />

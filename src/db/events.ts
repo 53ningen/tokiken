@@ -8,6 +8,7 @@ import {
   event_tweets,
   events,
   events_type,
+  setlist_credit,
 } from '@prisma/client'
 import { unstable_cache } from 'next/cache'
 
@@ -19,6 +20,7 @@ export type EventType = events_type
 export type EventPlace = event_places
 export type EventTweet = event_tweets
 export type EventSetlist = event_setlist
+export type SetlistCredit = setlist_credit
 
 export const eventTag = (id: number) => `event-${id}`
 export const getEvent = (id: number) =>
@@ -218,6 +220,22 @@ export const listEventSetlist = (eventId: number) =>
     [eventSetlistTag(eventId)],
     {
       tags: [eventSetlistTag(eventId)],
+    }
+  )
+export const setlistCreditTag = (eventId: number) => `setlist-credit-${eventId}`
+export const getSetlistCredit = (eventId: number) =>
+  unstable_cache(
+    async () => {
+      const credit = await prisma.setlist_credit.findFirst({
+        where: {
+          event_id: eventId,
+        },
+      })
+      return credit
+    },
+    [setlistCreditTag(eventId)],
+    {
+      tags: [setlistCreditTag(eventId)],
     }
   )
 
