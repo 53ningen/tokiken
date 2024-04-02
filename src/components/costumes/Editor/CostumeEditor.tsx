@@ -21,6 +21,7 @@ const CostumeEditor = ({ costume }: Props) => {
   }, [state.costume])
   return (
     <form action={dispatch} className="flex flex-col gap-2">
+      <input type="hidden" name="id" value={costume?.id || ''} />
       <FormItem label="衣装名">
         <div className="flex gap-2">
           <input
@@ -65,7 +66,9 @@ const CostumeEditor = ({ costume }: Props) => {
       </FormItem>
       {state.error && <Alert type="error" message={state.error} />}
       <div className="text-right">
-        <ActionButton type="submit">衣装情報作成</ActionButton>
+        <ActionButton type="submit">
+          {costume ? '衣装情報更新' : '衣装情報作成'}
+        </ActionButton>
       </div>
     </form>
   )

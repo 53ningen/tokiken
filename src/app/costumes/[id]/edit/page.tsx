@@ -1,12 +1,17 @@
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
+import FormItem from '@/components/commons/FormItem'
+import Preview from '@/components/commons/Preview'
+import SectionHeading from '@/components/commons/SectionHeading'
+import Title from '@/components/commons/Title'
 import CostumeDetailImages from '@/components/costumes/CostumeDetails/CostumeDetailImages'
-import CostumeInfo from '@/components/costumes/CostumeDetails/CostumeInfo'
 import CostumeMetadata from '@/components/costumes/CostumeDetails/CostumeMetadata'
 import CostumeTweets from '@/components/costumes/CostumeDetails/CostumeTweets'
 import CostumeYouTubeVideos from '@/components/costumes/CostumeDetails/CostumeYouTubeVideos'
+import CostumeEditor from '@/components/costumes/Editor/CostumeEditor'
 import { getCostume } from '@/db/costumes'
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface Props {
@@ -22,14 +27,11 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata | nu
   if (!costume) {
     return null
   } else {
-    const title = `${costume.name} - 超ときめき♡衣装データベース`
-    const description = `超ときめき♡宣伝部の衣装: ${costume.name} のデータ`
+    const title = `${costume.name} - 編集`
     return {
       title,
-      description,
       openGraph: {
         title,
-        description,
       },
     }
   }
@@ -49,24 +51,45 @@ const Costume = async ({ params }: Props) => {
     notFound()
   }
   return (
-    <Container className="max-w-screen-lg text-center px-2 md:px-2 py-4">
-      <Breadcrumbs
-        items={[
-          { name: '衣装データベース', href: '/costumes' },
-          { name: costume.name, href: `/costumes/${costume.id}` },
-        ]}
-      />
-      <CostumeMetadata costume={costume} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
-        <div className="flex-none">
-          <CostumeDetailImages images={costume.costume_images} />
+    <Container className="max-w-screen-lg px-2 md:px-2 py-4">
+      <Breadcrumbs items={[{ name: '衣装データベース', href: '/costumes' }]} />
+      <div>
+        <Link href={`/costumes/${costume.id}`}>
+          <Title title={costume.name || ''} />
+        </Link>
+      </div>
+      <div className="grid gap-8">
+        <div>
+          <SectionHeading title="📝 基本情報" />
+          <CostumeEditor costume={costume} />
+          <FormItem label="お披露目"></FormItem>
+          <Preview>
+            <CostumeMetadata costume={costume} />
+          </Preview>
         </div>
         <div>
-          <CostumeTweets costumeId={costume.id} />
+          <SectionHeading title="📷 写真" />
+          <Preview>
+            <div className="w-1/2">
+              <CostumeDetailImages images={[]} />
+            </div>
+          </Preview>
+        </div>
+        <div>
+          <SectionHeading title="📱 関連ツイート" />
+          <Preview>
+            <div className="w-1/2">
+              <CostumeTweets costumeId={costume.id} />
+            </div>
+          </Preview>
+        </div>
+        <div>
+          <SectionHeading title="📱 関連 YouTube 動画" />
+          <Preview>
+            <CostumeYouTubeVideos costumeId={costume.id} />
+          </Preview>
         </div>
       </div>
-      <CostumeInfo costumeId={costume.id} />
-      <CostumeYouTubeVideos costumeId={costume.id} />
     </Container>
   )
 }

@@ -1,12 +1,13 @@
+import AuthContainer from '@/components/commons/AuthContainer'
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
 import CostumeDetailImages from '@/components/costumes/CostumeDetails/CostumeDetailImages'
-import CostumeInfo from '@/components/costumes/CostumeDetails/CostumeInfo'
 import CostumeMetadata from '@/components/costumes/CostumeDetails/CostumeMetadata'
 import CostumeTweets from '@/components/costumes/CostumeDetails/CostumeTweets'
 import CostumeYouTubeVideos from '@/components/costumes/CostumeDetails/CostumeYouTubeVideos'
 import { getCostume } from '@/db/costumes'
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface Props {
@@ -52,6 +53,13 @@ const Costume = async ({ params }: Props) => {
     <Container className="max-w-screen-lg text-center px-2 md:px-2 py-4">
       <Breadcrumbs items={[{ name: '衣装データベース', href: '/costumes' }]} />
       <CostumeMetadata costume={costume} />
+      <AuthContainer>
+        <div className="my-2 text-left">
+          <Link href={`/costumes/${costume.id}/edit`} className="text-primary">
+            🔒 編集する
+          </Link>
+        </div>
+      </AuthContainer>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
         <div className="flex-none">
           <CostumeDetailImages images={costume.costume_images} />
@@ -60,7 +68,6 @@ const Costume = async ({ params }: Props) => {
           <CostumeTweets costumeId={costume.id} />
         </div>
       </div>
-      <CostumeInfo costumeId={costume.id} />
       <CostumeYouTubeVideos costumeId={costume.id} />
     </Container>
   )

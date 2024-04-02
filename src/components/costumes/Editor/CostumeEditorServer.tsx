@@ -12,38 +12,56 @@ interface State {
   costume?: Costume
 }
 
-export const costumeEditorAction = async (
-  state: State,
-  data: FormData
-): Promise<State> => {
+export const costumeEditorAction = async (_: State, data: FormData): Promise<State> => {
   if (!(await isAdminUserServer())) {
     return { error: Errors.NeedAdminPermission.message }
   }
-
+  console.log(data)
+  const id = parseInt(data.get('id') as string)
   const slug = data.get('slug') as string
   const name = data.get('name') as string
-  const is_official_name = data.get('is_official_name') === 'on'
+  const is_official_name = data.get('is_official_name') === '1'
   const type = data.get('type') as CostumeType
   if (!slug || !name || !type) {
     return { error: Errors.InvalidRequest.message }
   }
   try {
-    const params = {
-      data: {
-        slug,
-        name,
-        is_official_name,
-        type,
-      },
+    if (isNaN(id)) {
+      const params = {
+        data: {
+          slug,
+          name,
+          is_official_name,
+          type,
+        },
+      }
+      const costume = await executeQueryWithLogging(
+        prisma.costumes.create(params),
+        'costumes.create',
+        params
+      )
+      revalidateTag(costumeTag(costume.id))
+      revalidateTag(costumesTag)
+      return { costume }
+    } else {
+      const params = {
+        where: { id },
+        data: {
+          slug,
+          name,
+          is_official_name,
+          type,
+        },
+      }
+      const costume = await executeQueryWithLogging(
+        prisma.costumes.update(params),
+        'costumes.update',
+        params
+      )
+      revalidateTag(costumeTag(costume.id))
+      revalidateTag(costumesTag)
+      return { costume }
     }
-    const costume = await executeQueryWithLogging(
-      prisma.costumes.create(params),
-      'costumes.create',
-      params
-    )
-    revalidateTag(costumeTag(costume.id))
-    revalidateTag(costumesTag)
-    return { costume }
   } catch (e) {
     console.error(e)
     return { error: Errors.DatabaseError.message }
