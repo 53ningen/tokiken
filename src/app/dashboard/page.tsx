@@ -8,6 +8,7 @@ import ChannelCollection from '@/components/contents/youtube/ChannelCollection/C
 import PutVideoForm from '@/components/contents/youtube/Editor/PutVideoForm'
 import SyncYouTubeChannelsForm from '@/components/contents/youtube/Editor/SyncYouTubeChannelsForm'
 import RevalidateTagForm from '@/components/dashboard/RevalidateTagForm'
+import ArtistEditor from '@/components/dashboard/artists/ArtistEditor'
 import { EventEditorWrapper } from '@/components/events/Editor/EventEditorWrapper'
 import EventPlaceEditor from '@/components/events/Editor/EventPlaceEditor'
 import { AuthGetCurrentUserServer, groupsServer } from '@/utils/amplify'
@@ -63,7 +64,9 @@ const Dashboard = async () => {
         <div className="flex flex-col">
           <SectionHeading title="🎼 楽曲データ追加 [Admin Only]" />
           <div className="grid gap-8 text-left">
-            <FormItem label="アーティスト"></FormItem>
+            <FormItem label="アーティスト">
+              <ArtistEditor />
+            </FormItem>
             <FormItem label="楽曲"></FormItem>
             <FormItem label="レコード"></FormItem>
           </div>

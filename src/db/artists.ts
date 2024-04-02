@@ -25,6 +25,7 @@ export const getArtist = (id: number) =>
     { tags: [`artists-${id}`] }
   )
 
+export const artistsTag = 'artists'
 export const listArtists = unstable_cache(
   async () => {
     const artists = await prisma.artists.findMany({
@@ -48,6 +49,6 @@ export const listArtists = unstable_cache(
     })
     return artists
   },
-  ['artists'],
-  { tags: ['artists'] }
+  [artistsTag],
+  { tags: [artistsTag] }
 )
