@@ -19,7 +19,12 @@ const EventSetlistEditorWrapper = async ({ event }: Props) => {
   return (
     <div className="flex flex-col gap-4">
       {setlists.length === 0 && <EventSetlistBulkEditorWrapper event={event} />}
-      <EventSetlistEditor event={event} songs={songs} setlist={setlists} />
+      <EventSetlistEditor
+        key={setlists.length.toString()}
+        event={event}
+        songs={songs}
+        setlist={setlists}
+      />
     </div>
   )
 }

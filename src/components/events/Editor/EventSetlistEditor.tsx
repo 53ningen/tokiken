@@ -57,7 +57,7 @@ const EventSetlistEditor = ({ event, songs, setlist }: Props) => {
                 </td>
                 <td>
                   <input
-                    type="number"
+                    type="text"
                     name={`order_label[${i}]`}
                     defaultValue={setlist.order_label || ''}
                     placeholder="null"
