@@ -50,7 +50,12 @@ const Costume = async ({ params }: Props) => {
   }
   return (
     <Container className="max-w-screen-lg text-center px-2 md:px-2 py-4">
-      <Breadcrumbs items={[{ name: '衣装データベース', href: '/costumes' }]} />
+      <Breadcrumbs
+        items={[
+          { name: '衣装データベース', href: '/costumes' },
+          { name: costume.name, href: `/costumes/${costume.id}` },
+        ]}
+      />
       <CostumeMetadata costume={costume} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
         <div className="flex-none">

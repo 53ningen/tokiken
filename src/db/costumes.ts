@@ -6,6 +6,7 @@ export type Costume = costumes
 export type CostumeImage = costume_images
 export type CostumeType = costumes_type
 
+export const costumeTag = (id: number) => `costumes-${id}`
 export const getCostume = (id: number) =>
   unstable_cache(
     async () => {
@@ -21,10 +22,11 @@ export const getCostume = (id: number) =>
       })
       return costume
     },
-    [`costumes-${id}`],
-    { tags: [`costumes-${id}`] }
+    [costumeTag(id)],
+    { tags: [costumeTag(id)] }
   )
 
+export const costumesTag = 'costumes'
 export const listCostumes = unstable_cache(
   async () => {
     const costumes = prisma.costumes.findMany({
@@ -40,6 +42,6 @@ export const listCostumes = unstable_cache(
     })
     return costumes
   },
-  [`costumes`],
-  { tags: ['costumes'] }
+  [costumesTag],
+  { tags: [costumesTag] }
 )

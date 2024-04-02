@@ -8,6 +8,7 @@ import Title from '@/components/commons/Title'
 import ChannelCollection from '@/components/contents/youtube/ChannelCollection/ChannelCollection'
 import PutVideoForm from '@/components/contents/youtube/Editor/PutVideoForm'
 import SyncYouTubeChannelsForm from '@/components/contents/youtube/Editor/SyncYouTubeChannelsForm'
+import CostumeEditor from '@/components/costumes/Editor/CostumeEditor'
 import RevalidateTagForm from '@/components/dashboard/RevalidateTagForm'
 import ArtistEditor from '@/components/dashboard/artists/ArtistEditor'
 import { EventEditorWrapper } from '@/components/events/Editor/EventEditorWrapper'
@@ -78,9 +79,7 @@ const Dashboard = async () => {
         </div>
         <div className="flex flex-col">
           <SectionHeading title="👗 衣装データ追加 [Admin Only]" />
-          <div className="grid gap-8 text-left">
-            <FormItem label="追加"></FormItem>
-          </div>
+          <CostumeEditor />
         </div>
         <div className="flex flex-col">
           <SectionHeading title="📙 記事追加 [Admin Only]" />
