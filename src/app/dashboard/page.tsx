@@ -1,3 +1,4 @@
+import Alert from '@/components/commons/Alert'
 import Container from '@/components/commons/Container'
 import FormItem from '@/components/commons/FormItem'
 import LogoutButton from '@/components/commons/LogoutButton'
@@ -29,6 +30,10 @@ const Dashboard = async () => {
         </div>
         <div className="flex flex-col">
           <SectionHeading title="🏟️ イベントデータ管理" />
+          <Alert
+            type="info"
+            message="「作成済みイベント編集ページ」へは各イベントページの編集ボタンから遷移可能"
+          />
           <div className="grid gap-8 text-left">
             <FormItem label="イベント追加">
               <EventEditorWrapper />

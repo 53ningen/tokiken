@@ -29,15 +29,17 @@ const EventSetlistEditor = ({ event, songs, setlist }: Props) => {
   })
   return (
     <div>
-      <form action={dispatch} className="grid gap-4">
+      <form action={dispatch} className="grid gap-4 text-sm pt-2">
         <input type="submit" hidden onClick={(e) => e.preventDefault()} />
         <input type="hidden" name="event_id" value={event.id} />
         <table className="w-full [&_td]:px-1">
           <thead className="text-center text-sm text-gray-500 font-bold">
             <tr>
-              <td>曲順</td>
-              <td>楽曲名</td>
-              <td>楽曲選択</td>
+              <td>表示順*</td>
+              <td>曲順ラベル</td>
+              <td>楽曲名*</td>
+              <td>楽曲選択*</td>
+              <td>アンコール</td>
             </tr>
           </thead>
           <tbody>
@@ -49,6 +51,16 @@ const EventSetlistEditor = ({ event, songs, setlist }: Props) => {
                     type="number"
                     name={`order[${i}]`}
                     defaultValue={setlist.order}
+                    tabIndex={-1}
+                    className="border rounded py-1 px-2 w-16"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    name={`order_label[${i}]`}
+                    defaultValue={setlist.order_label || ''}
+                    placeholder="null"
                     tabIndex={-1}
                     className="border rounded py-1 px-2 w-16"
                   />
@@ -82,6 +94,15 @@ const EventSetlistEditor = ({ event, songs, setlist }: Props) => {
                       </option>
                     ))}
                   </datalist>
+                </td>
+                <td>
+                  <input
+                    type="checkbox"
+                    name={`encore[${i}]`}
+                    defaultChecked={setlist.encore}
+                    tabIndex={-1}
+                    className="border rounded py-1 px-3 w-16"
+                  />
                 </td>
                 <td className="text-nowrap">
                   <ActionButton

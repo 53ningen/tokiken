@@ -64,6 +64,8 @@ const extractRowData = async (data: FormData, i: number) => {
   const songs = await listSongs()
   const id = parseInt(data.get(`id[${i}]`) as string)
   const order = parseInt(data.get(`order[${i}]`) as string)
+  const order_label = data.get(`order_label[${i}]`) as string
+  const encore = data.get(`encore[${i}]`) === 'on'
   const song = data.get(`song[${i}]`) as string
   const song_id = songs.find((s) => s.title === song)?.id || null
   if (song && !song_id) {
@@ -73,7 +75,14 @@ const extractRowData = async (data: FormData, i: number) => {
   if (isNaN(id) || isNaN(order)) {
     return undefined
   } else {
-    return { id, order, song_id, song_title: song_title === '' ? null : song_title }
+    return {
+      id,
+      order,
+      order_label: order_label === '' ? null : order_label,
+      song_id,
+      song_title: song_title === '' ? null : song_title,
+      encore,
+    }
   }
 }
 
@@ -93,8 +102,10 @@ const updateRow = async (
           data: {
             event_id: event_id,
             order: row.order,
+            order_label: row.order_label,
             song_id: row.song_id,
             song_title: row.song_title,
+            encore: row.encore,
           },
         }
         const res = await executeQueryWithLogging(
@@ -123,8 +134,10 @@ const updateRow = async (
           where: { id: row.id },
           data: {
             order: row.order,
+            order_label: row.order_label,
             song_id: row.song_id,
             song_title: row.song_title,
+            encore: row.encore,
           },
         }
         const res = await executeQueryWithLogging(
