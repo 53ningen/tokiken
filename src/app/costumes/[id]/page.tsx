@@ -1,7 +1,7 @@
 import AuthContainer from '@/components/commons/AuthContainer'
 import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
-import CostumeDetailImages from '@/components/costumes/CostumeDetails/CostumeDetailImages'
+import CostumeDetailImagesWrapper from '@/components/costumes/CostumeDetails/CostumeDetailImagesWrapper'
 import CostumeMetadata from '@/components/costumes/CostumeDetails/CostumeMetadata'
 import CostumeTweets from '@/components/costumes/CostumeDetails/CostumeTweets'
 import CostumeYouTubeVideos from '@/components/costumes/CostumeDetails/CostumeYouTubeVideos'
@@ -62,7 +62,7 @@ const Costume = async ({ params }: Props) => {
       </AuthContainer>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
         <div className="flex-none">
-          <CostumeDetailImages images={costume.costume_images} />
+          <CostumeDetailImagesWrapper costume={costume} />
         </div>
         <div>
           <CostumeTweets costumeId={costume.id} />

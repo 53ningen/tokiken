@@ -13,7 +13,6 @@ export const getCostume = (id: number) =>
       const costume = await prisma.costumes.findUnique({
         include: {
           artists: true,
-          costume_images: true,
           events: true,
         },
         where: {
@@ -23,7 +22,22 @@ export const getCostume = (id: number) =>
       return costume
     },
     [costumeTag(id)],
-    { tags: [costumeTag(id)] }
+    { tags: [costumeTag(id), 'costume'] }
+  )
+
+export const costumeImagesTag = (id: number) => `costume-images-${id}`
+export const listCostumeImages = (id: number) =>
+  unstable_cache(
+    async () => {
+      const images = await prisma.costume_images.findMany({
+        where: {
+          costume_id: id,
+        },
+      })
+      return images
+    },
+    [costumeImagesTag(id)],
+    { tags: [costumeImagesTag(id)] }
   )
 
 export const costumesTag = 'costumes'
@@ -43,5 +57,5 @@ export const listCostumes = unstable_cache(
     return costumes
   },
   [costumesTag],
-  { tags: [costumesTag] }
+  { tags: [costumesTag, 'costume'] }
 )

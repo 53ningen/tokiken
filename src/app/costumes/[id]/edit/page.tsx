@@ -4,11 +4,12 @@ import FormItem from '@/components/commons/FormItem'
 import Preview from '@/components/commons/Preview'
 import SectionHeading from '@/components/commons/SectionHeading'
 import Title from '@/components/commons/Title'
-import CostumeDetailImages from '@/components/costumes/CostumeDetails/CostumeDetailImages'
+import CostumeDetailImagesWrapper from '@/components/costumes/CostumeDetails/CostumeDetailImagesWrapper'
 import CostumeMetadata from '@/components/costumes/CostumeDetails/CostumeMetadata'
 import CostumeTweets from '@/components/costumes/CostumeDetails/CostumeTweets'
 import CostumeYouTubeVideos from '@/components/costumes/CostumeDetails/CostumeYouTubeVideos'
 import CostumeEditor from '@/components/costumes/Editor/CostumeEditor'
+import { CostumeImagesEditorWrapper } from '@/components/costumes/Editor/CostumeImagesEditorServer'
 import { getCostume } from '@/db/costumes'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -69,9 +70,10 @@ const Costume = async ({ params }: Props) => {
         </div>
         <div>
           <SectionHeading title="📷 写真" />
+          <CostumeImagesEditorWrapper costume={costume} />
           <Preview>
             <div className="w-1/2">
-              <CostumeDetailImages images={[]} />
+              <CostumeDetailImagesWrapper costume={costume} />
             </div>
           </Preview>
         </div>

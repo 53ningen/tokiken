@@ -144,7 +144,7 @@ export const listEventCostumes = (eventId: number) =>
     },
     [eventCostumesTag(eventId)],
     {
-      tags: [eventCostumesTag(eventId)],
+      tags: [eventCostumesTag(eventId), 'costume'],
     }
   )
 

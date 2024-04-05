@@ -1,5 +1,7 @@
 /** サイトや各種メタデータに関する定数群 */
 
+import { S3ClientConfig } from '@aws-sdk/client-s3'
+
 export const noImageUrl = 'https://tokiken.com/noimage.png'
 
 export const inquiryFormUrl =
@@ -30,4 +32,13 @@ export const costumeImageUrl = (size: 'xs' | 'md' | 'lg', imageKey?: string) => 
     : undefined
   const url = imageUrl(key)
   return url
+}
+
+export const r2S3ClientConfig: S3ClientConfig = {
+  region: 'auto',
+  endpoint: process.env.CLOUDFLARE_R2_URL as string,
+  credentials: {
+    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY as string,
+    secretAccessKey: process.env.CLOUDFLARE_R2_ACCESS_SECRET as string,
+  },
 }
