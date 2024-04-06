@@ -1,11 +1,9 @@
 'use server'
 
-import { TokisenRegimes } from '@/consts/tokisen'
 import { Event, EventCast, eventCastsTag, listEventCasts } from '@/db/events'
 import { executeQueriesWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAssociateUserServer } from '@/utils/amplify'
-import { Either, left, right } from '@/utils/either'
 import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 import EventCastEditor from './EventCastEditor'
@@ -21,74 +19,71 @@ const EventCastEditorWrapper = async ({ event }: Props) => {
 
 export default EventCastEditorWrapper
 
-export const updateCasts = async (
+interface State {
+  error?: string
+  casts?: EventCast[]
+}
+
+export const eventCastEditorAction = async (
+  state: State,
   data: FormData
-): Promise<Either<string, EventCast[]>> => {
+): Promise<State> => {
   if (!(await isAssociateUserServer())) {
-    return left(Errors.NeedAssociatePermission.message)
+    return { error: Errors.NeedAssociatePermission.message }
   }
 
+  const event_id = parseInt(data.get('event_id') as string)
+  const membersRaw = data.get('regime_members') as string
+  const action = data.get('action') as string
+  if (isNaN(event_id) || !action || !membersRaw) {
+    return { error: Errors.InvalidRequest.message }
+  }
+
+  const members = membersRaw.split(',')
+  if (action === 'update') {
+    const res = await updateCasts(data, members)
+    return res
+  }
+
+  if (action === 'insert_all') {
+    const res = await insertEventCasts(event_id, ...members)
+    return res
+  }
+  return state
+}
+
+const updateCasts = async (data: FormData, members: string[]): Promise<State> => {
   const eventId = Number(data.get('event_id'))
-  const members = Array.from(
-    new Set(
-      TokisenRegimes.map((regime) => regime.members)
-        .flat()
-        .map((m) => m.name)
-    )
-  )
   try {
-    const res = await prisma.$transaction(async () => {
-      const records: EventCast[] = []
-      for (const name of members) {
-        const exists = await prisma.event_casts.findFirst({
-          where: {
-            id: `${eventId}/${name}`,
-          },
-        })
-        const checked = data.get(encodeURIComponent(name))
-        if ((exists && checked) || (!exists && !checked)) {
-          // レコードとチェックボックスの状態が一致しているならば DB 更新の必要なし
-          if (exists) {
-            records.push(exists)
-          }
-          continue
-        } else if (exists) {
-          // レコードが存在しているがチェックボックスがオフならば削除
-          const params = {
-            where: {
-              id: `${eventId}/${name}`,
-            },
-          }
-          await prisma.event_casts.delete(params)
-        } else {
-          // レコードが存在していないがチェックボックスがオンならば追加
-          const params = {
-            data: {
-              id: `${eventId}/${name}`,
-              event_id: eventId,
-              name: name,
-            },
-          }
-          const r = await prisma.event_casts.create(params)
-          records.push(r)
-        }
+    const currentCasts = await listEventCasts(eventId)()
+
+    // DB に存在しているが、チェックボックスにチェックが入っていないキャストを抽出
+    const toBeDeleted: string[] = []
+    for (const cast of currentCasts) {
+      const checked = data.get(encodeURIComponent(cast.name))
+      if (!checked) {
+        toBeDeleted.push(cast.name)
       }
-      revalidateTag(eventCastsTag(eventId))
-      return records
+    }
+    await deleteEventCasts(eventId, ...toBeDeleted)
+
+    // チェックボックスにチェックが入っているが、DBに存在しないキャストを抽出
+    const toBeAdded = members.filter((name) => {
+      const checked = data.get(encodeURIComponent(name)) !== undefined
+      return checked && !currentCasts.find((cast) => cast.name === name)
     })
-    return right(res)
+    await insertEventCasts(eventId, ...toBeAdded)
+    const newCasts = await listEventCasts(eventId)()
+    return { casts: newCasts }
   } catch (e) {
     console.error(e)
-    return left(Errors.DatabaseError.message)
+    return { error: Errors.DatabaseError.message }
   }
 }
 
-export const insertCasts = async (
-  eventId: number,
-  ...names: string[]
-): Promise<Either<string, EventCast[]>> => {
-  if (!(await isAssociateUserServer())) {
-    return left(Errors.NeedAssociatePermission.message)
+const insertEventCasts = async (eventId: number, ...names: string[]): Promise<State> => {
+  if (names.length === 0) {
+    return { casts: [] }
   }
   try {
     const params = names.map((name) => {
@@ -111,8 +106,34 @@ export const insertCasts = async (
       params
     )
     revalidateTag(eventCastsTag(eventId))
-    return right(res)
+    return { casts: res }
   } catch (e) {
-    return left(Errors.DatabaseError.message)
+    console.error(e)
+    return { error: Errors.DatabaseError.message }
+  }
+}
+
+const deleteEventCasts = async (eventId: number, ...names: string[]): Promise<State> => {
+  if (names.length === 0) {
+    return { casts: [] }
+  }
+  try {
+    const params = names.map((name) => {
+      return {
+        where: {
+          id: `${eventId}/${name}`,
+        },
+      }
+    })
+    await executeQueriesWithLogging(
+      params.map((p) => prisma.event_casts.delete(p)),
+      'event_casts.bulk_delete',
+      params
+    )
+    revalidateTag(eventCastsTag(eventId))
+    return { casts: [] }
+  } catch (e) {
+    console.error(e)
+    return { error: Errors.DatabaseError.message }
   }
 }

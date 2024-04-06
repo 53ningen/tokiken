@@ -6,7 +6,6 @@ import FormItem from '@/components/commons/FormItem'
 import { costumeImageUrl } from '@/consts/metadata'
 import { Costume, CostumeImage } from '@/db/costumes'
 import { Event, EventCostume } from '@/db/events'
-import { Either } from '@/utils/either'
 import { useState } from 'react'
 import { useFormState } from 'react-dom'
 import { eventCostumeEditorAction } from './EventCostumeEditorWrapper'
@@ -24,7 +23,6 @@ interface Props {
 
 const EventCostumeEditor = ({ event, eventCostumes, allCostumes }: Props) => {
   const [state, dispatch] = useFormState(eventCostumeEditorAction, {})
-  const [result, setResult] = useState<Either<string, EventCostume>>()
   const [selectedCostume, setSelectedCostume] = useState<
     Costume & { costume_images: CostumeImage[] }
   >()
@@ -68,9 +66,7 @@ const EventCostumeEditor = ({ event, eventCostumes, allCostumes }: Props) => {
               追加
             </ActionButton>
           </div>
-          {result?.isLeft && (
-            <Alert type="error" message={result.value} className="my-4" />
-          )}
+          {state.error && <Alert type="error" message={state.error} className="my-4" />}
         </FormItem>
         <FormItem label="削除">
           {eventCostumes.length === 0 ? (

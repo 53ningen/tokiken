@@ -1,13 +1,12 @@
 'use client'
 
+import ActionButton from '@/components/commons/ActionButton'
 import Alert from '@/components/commons/Alert'
 import FormItem from '@/components/commons/FormItem'
-import SubmitButton from '@/components/commons/SubmitButton'
 import { getTokisenRegime } from '@/consts/tokisen'
 import { Event, EventCast } from '@/db/events'
-import { Either } from '@/utils/either'
-import { useRef, useState } from 'react'
-import { insertCasts, updateCasts } from './EventCastEditorWrapper'
+import { useFormState } from 'react-dom'
+import { eventCastEditorAction } from './EventCastEditorWrapper'
 
 interface Props {
   event: Event
@@ -15,53 +14,48 @@ interface Props {
 }
 
 const EventCastEditor = ({ event, casts }: Props) => {
-  const [result, setResult] = useState<Either<string, EventCast[]>>()
-  const formRef = useRef<HTMLFormElement>(null)
+  const [state, dispatch] = useFormState(eventCastEditorAction, {})
   const { date } = event
-  const { members, groupName } = getTokisenRegime(date)!
+  const { members } = getTokisenRegime(date)!
   const names = casts.map((cast) => cast.name)
   return (
     <form
-      ref={formRef}
-      action={async (data) => {
-        console.log(data)
-        setResult(await updateCasts(data))
-      }}>
-      <div className="flex">
-        <FormItem label="出演者">
-          <input type="hidden" name="event_id" value={event.id} />
+      key={JSON.stringify(state)}
+      action={dispatch}
+      className="flex flex-col gap-2 pt-2">
+      <input type="hidden" name="event_id" value={event.id} />
+      <input
+        type="hidden"
+        name="regime_members"
+        value={members.map((m) => m.name).join(',')}
+      />
+      <FormItem label="出演者">
+        <div className="flex gap-2">
           {members.map((member) => {
             const id = encodeURIComponent(member.name)
             return (
-              <div key={member.name} className="mr-2">
+              <div key={member.name} className="flex gap-1">
                 <input
                   type="checkbox"
                   id={id}
                   name={id}
-                  defaultChecked={
-                    names.includes(member.name) || names.includes(groupName)
-                  }
-                  className="mr-1"
+                  defaultChecked={names.includes(member.name)}
                 />
                 <label htmlFor={id}>{member.name}</label>
               </div>
             )
           })}
-        </FormItem>
-      </div>
+        </div>
+      </FormItem>
+      {state.error && <Alert type="error" message={state.error} />}
       <div className="text-right">
-        <SubmitButton
-          className="mr-2"
-          onClick={async (e) => {
-            e.preventDefault()
-            setResult(await insertCasts(event.id, ...members.map((m) => m.name)))
-            formRef.current?.reset()
-          }}>
+        <ActionButton name="action" value="update" className="mr-2">
+          更新
+        </ActionButton>
+        <ActionButton name="action" value="insert_all">
           全メンバー追加
-        </SubmitButton>
-        <SubmitButton>出演者更新</SubmitButton>
+        </ActionButton>
       </div>
-      {result?.isLeft && <Alert type="error" message={result.value} />}
     </form>
   )
 }
