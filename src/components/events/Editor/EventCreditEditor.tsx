@@ -71,17 +71,38 @@ const EventCreditEditor = ({ event, artists, credits }: Props) => {
                       />
                     </td>
                     <td>
-                      <select
-                        name={`artist_id[${i}]`}
-                        defaultValue={credit.artist_id}
-                        className="border rounded py-1 px-2 w-full overflow-x-hidden text-ellipsis">
-                        <option value=""></option>
-                        {artists.map((artist) => (
-                          <option key={artist.id} value={artist.id}>
-                            {artist.name}
+                      <input
+                        list={`artist_names[${i}]`}
+                        type="text"
+                        pattern={artists.map((artist) => artist.name).join('|')}
+                        defaultValue={
+                          artists.find((a) => a.id === credit.artist_id)?.name
+                        }
+                        placeholder="アーティスト選択"
+                        className="border rounded py-1 px-3 w-full"
+                        onChange={(e) => {
+                          const artist = artists.find((a) => a.name === e.target.value)
+                          if (artist) {
+                            const elem = document.getElementById(
+                              `artist_id[${i}]`
+                            ) as HTMLInputElement
+                            elem.value = artist.id.toString()
+                          }
+                        }}
+                      />
+                      <datalist id={`artist_names[${i}]`}>
+                        {artists.map((artists) => (
+                          <option key={artists.id} value={artists.name}>
+                            {artists.kana}
                           </option>
                         ))}
-                      </select>
+                      </datalist>
+                      <input
+                        id={`artist_id[${i}]`}
+                        type="hidden"
+                        name={`artist_id[${i}]`}
+                        value={credit.artist_id}
+                      />
                     </td>
                     <td>
                       <input

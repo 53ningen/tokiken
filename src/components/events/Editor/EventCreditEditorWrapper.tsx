@@ -32,6 +32,7 @@ export const updateCredit = async (state: State, data: FormData): Promise<State>
   if (!(await isAssociateUserServer())) {
     return { ...state, error: Errors.NeedAssociatePermission.message }
   }
+
   const event_id = parseInt(data.get('event_id') as string)
   const action = data.get('action') as string
   if (isNaN(event_id) || !action) {
@@ -50,6 +51,7 @@ export const updateCredit = async (state: State, data: FormData): Promise<State>
   const update = action.match(/update:(\d+)/)
   const updateIndex = parseInt(update ? update[1] : '')
   if (!isNaN(updateIndex) && updateIndex >= 0) {
+    console.log(data)
     const res = await updateRow(state, data, event_id, updateIndex)
     return res
   }
