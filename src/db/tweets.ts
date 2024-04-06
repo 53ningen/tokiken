@@ -22,6 +22,7 @@ export const getTweet = (id: string) =>
     { tags: [`tweets-${id}`] }
   )
 
+export const tweetsByCostumeIdTag = (costumeId: number) => `tweets-costume-${costumeId}`
 export const listTweetsByCostumeId = (costumeId: number) =>
   unstable_cache(
     async () => {
@@ -42,8 +43,8 @@ export const listTweetsByCostumeId = (costumeId: number) =>
       })
       return tweets
     },
-    [`tweets-costume-${costumeId}`],
-    { tags: [`tweets-costume-${costumeId}`] }
+    [tweetsByCostumeIdTag(costumeId)],
+    { tags: [tweetsByCostumeIdTag(costumeId)] }
   )
 
 export const tweetsByDateTag = (date: string) => `tweets-date-${date}`

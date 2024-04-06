@@ -10,6 +10,7 @@ import CostumeTweets from '@/components/costumes/CostumeDetails/CostumeTweets'
 import CostumeYouTubeVideos from '@/components/costumes/CostumeDetails/CostumeYouTubeVideos'
 import CostumeEditor from '@/components/costumes/Editor/CostumeEditor'
 import { CostumeImagesEditorWrapper } from '@/components/costumes/Editor/CostumeImagesEditorServer'
+import CostumeTweetEditorServer from '@/components/costumes/Editor/CostumeTweetEditorServer'
 import CostumeYouTubeVideoEditorWrapper from '@/components/costumes/Editor/CostumeYouTubeVideoEditorWrapper'
 import { getCostume } from '@/db/costumes'
 import { Metadata } from 'next'
@@ -80,6 +81,7 @@ const Costume = async ({ params }: Props) => {
         </div>
         <div>
           <SectionHeading title="📱 関連ツイート" />
+          <CostumeTweetEditorServer costume={costume} />
           <Preview>
             <div className="w-1/2">
               <CostumeTweets costumeId={costume.id} />
