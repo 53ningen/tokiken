@@ -2,19 +2,17 @@
 
 import { listCostumes } from '@/db/costumes'
 import { Event, EventCostume, eventCostumesTag, listEventCostumes } from '@/db/events'
+import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
-import {
-  AuthGetCurrentUserServer,
-  isAdminUserServer,
-  isAssociateUserServer,
-} from '@/utils/amplify'
-import { Either, left, right } from '@/utils/either'
+import { isAssociateUserServer } from '@/utils/amplify'
+import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 import EventCostumeEditor from './EventCostumeEditor'
 
 interface Props {
   event: Event
 }
+
 export const EventCostumeEditorWrapper = async ({ event }: Props) => {
   const costumes = await listCostumes()
   const eventCostumes = await listEventCostumes(event.id)()
@@ -27,19 +25,53 @@ export const EventCostumeEditorWrapper = async ({ event }: Props) => {
   )
 }
 
-export async function addEventCostume(
+interface State {
+  error?: string
+  costume?: EventCostume
+}
+export const eventCostumeEditorAction = async (
+  _: State,
   data: FormData
-): Promise<Either<string, EventCostume>> {
+): Promise<State> => {
   if (!(await isAssociateUserServer())) {
-    return left('Unauthorized')
+    return { error: Errors.NeedAssociatePermission.message }
   }
 
+  const action = data.get('action') as string
+  if (action === 'insert') {
+    const res = await insertCostume(data)
+    return res
+  }
+
+  const del = action.match(/delete:(\d+)/)
+  const delId = parseInt(del ? del[1] : '')
+  if (!isNaN(delId)) {
+    const res = await deleteEventCostume(delId)
+    return res
+  }
+
+  const update = action.match(/update:(\d+)/)
+  const updateId = parseInt(update ? update[1] : '')
+  if (!isNaN(updateId)) {
+    const display_order = parseInt(data.get(`display_order[${updateId}]`) as string)
+    if (isNaN(display_order)) {
+      return { error: Errors.InvalidRequest.message }
+    }
+    const res = await updateEventCostume(updateId, display_order)
+    return res
+  }
+
+  return { error: Errors.InvalidRequest.message }
+}
+
+const insertCostume = async (data: FormData): Promise<State> => {
   const event_id = parseInt(data.get('event_id') as string)
   const costume_id = parseInt(data.get('costume_id') as string)
   const display_order = parseInt(data.get('display_order') as string)
   if (isNaN(event_id) || isNaN(costume_id) || isNaN(display_order)) {
-    return left('invalid event_id, costume_id, or display_order')
+    return { error: Errors.InvalidRequest.message }
   }
+
   try {
     const exists = await prisma.event_cosutumes.findFirst({
       where: {
@@ -48,30 +80,30 @@ export async function addEventCostume(
       },
     })
     if (exists) {
-      return left('The costume has already been added to the event.')
+      return { error: Errors.AlreadyExists.message }
     }
-    const res = await prisma.event_cosutumes.create({
+
+    const params = {
       data: {
         event_id,
         costume_id,
         display_order,
       },
-    })
+    }
+    const res = await executeQueryWithLogging(
+      prisma.event_cosutumes.create(params),
+      'event_cosutumes.create',
+      params
+    )
     revalidateTag(eventCostumesTag(event_id))
-    return right(res)
+    return { costume: res }
   } catch (e) {
     console.error(e)
-    return left('Internal Server Error')
+    return { error: Errors.DatabaseError.message }
   }
 }
 
-export const deleteEventCostume = async (
-  eventCostumeId: number
-): Promise<Either<string, EventCostume>> => {
-  if (!(await isAdminUserServer())) {
-    return left('Administrator permission required, please contact with @kusabure.')
-  }
-
+export const deleteEventCostume = async (eventCostumeId: number): Promise<State> => {
   try {
     const eventCostume = await prisma.event_cosutumes.delete({
       where: {
@@ -79,39 +111,30 @@ export const deleteEventCostume = async (
       },
     })
     revalidateTag(eventCostumesTag(eventCostume.event_id))
-    return right(eventCostume)
+    return { costume: eventCostume }
   } catch (e) {
     console.error(e)
-    return left('Internal Server Error')
+    return { error: Errors.DatabaseError.message }
   }
 }
 
 export const updateEventCostume = async (
-  data: FormData
-): Promise<Either<string, EventCostume>> => {
-  const authenticated = await AuthGetCurrentUserServer()
-  if (!authenticated) {
-    return left('Unauthorized')
-  }
-
-  const id = parseInt(data.get('event_costume_id') as string)
-  const display_order = parseInt(data.get('display_order') as string)
-  if (isNaN(id) || isNaN(display_order)) {
-    return left('invalid event_costume_id or display_order')
-  }
+  eventCostumeId: number,
+  display_order: number
+): Promise<State> => {
   try {
     const eventCostume = await prisma.event_cosutumes.update({
       where: {
-        id,
+        id: eventCostumeId,
       },
       data: {
         display_order,
       },
     })
     revalidateTag(eventCostumesTag(eventCostume.event_id))
-    return right(eventCostume)
+    return { costume: eventCostume }
   } catch (e) {
     console.error(e)
-    return left('Internal Server Error')
+    return { error: Errors.DatabaseError.message }
   }
 }
