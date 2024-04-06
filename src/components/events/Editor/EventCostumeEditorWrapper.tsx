@@ -105,11 +105,16 @@ const insertCostume = async (data: FormData): Promise<State> => {
 
 export const deleteEventCostume = async (eventCostumeId: number): Promise<State> => {
   try {
-    const eventCostume = await prisma.event_cosutumes.delete({
+    const params = {
       where: {
         id: eventCostumeId,
       },
-    })
+    }
+    const eventCostume = await executeQueryWithLogging(
+      prisma.event_cosutumes.delete(params),
+      'event_cosutumes.delete',
+      params
+    )
     revalidateTag(eventCostumesTag(eventCostume.event_id))
     return { costume: eventCostume }
   } catch (e) {
@@ -123,14 +128,19 @@ export const updateEventCostume = async (
   display_order: number
 ): Promise<State> => {
   try {
-    const eventCostume = await prisma.event_cosutumes.update({
+    const params = {
       where: {
         id: eventCostumeId,
       },
       data: {
         display_order,
       },
-    })
+    }
+    const eventCostume = await executeQueryWithLogging(
+      prisma.event_cosutumes.update(params),
+      'event_cosutumes.update',
+      params
+    )
     revalidateTag(eventCostumesTag(eventCostume.event_id))
     return { costume: eventCostume }
   } catch (e) {

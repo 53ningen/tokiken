@@ -1,6 +1,7 @@
 'use server'
 
 import { Event, EventTweet, eventTweetsTag, listEventTweets } from '@/db/events'
+import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { Tweet, TweetAuthor, listTweetsByDate } from '@/db/tweets'
 import { isAdminUserServer, isAssociateUserServer } from '@/utils/amplify'
@@ -76,7 +77,7 @@ export const addEventTweetByIds = async (
     if (exists) {
       return left('already exists')
     }
-    const res = await prisma.event_tweets.create({
+    const params = {
       data: {
         events: {
           connect: {
@@ -89,7 +90,12 @@ export const addEventTweetByIds = async (
           },
         },
       },
-    })
+    }
+    const res = await executeQueryWithLogging(
+      prisma.event_tweets.create(params),
+      'event_tweets.create',
+      params
+    )
     revalidateTag(eventTweetsTag(event_id))
     return right(res)
   } catch (e) {
@@ -120,11 +126,16 @@ export const deleteEventTweet = async (
   }
 
   try {
-    const res = await prisma.event_tweets.delete({
+    const params = {
       where: {
         id: eventTweetId,
       },
-    })
+    }
+    const res = await executeQueryWithLogging(
+      prisma.event_tweets.delete(params),
+      'event_tweets.delete',
+      params
+    )
     revalidateTag(eventTweetsTag(res.event_id))
     return right(res)
   } catch (e) {
