@@ -5,27 +5,27 @@ import Alert from '@/components/commons/Alert'
 import FormItem from '@/components/commons/FormItem'
 import YouTubeVideoListItem from '@/components/contents/youtube/YouTubeVideoListItem'
 import { youtubeVideoUrl } from '@/consts/metadata'
-import { Event } from '@/db/events'
+import { Costume } from '@/db/costumes'
 import { YouTubeVideo } from '@/db/youtube-vidoes'
 import { useState } from 'react'
 import { useFormState } from 'react-dom'
-import { eventYouTubeVideoEditorAction } from './EventYouTubeVideoEditorWrapper'
+import { costumeYouTubeVideoEditorAction } from './CostumeYouTubeVideoEditorWrapper'
 
 interface Props {
-  event: Event
+  costume: Costume
   videos: YouTubeVideo[]
 }
 
-const EventYouTubeVideoEditor = ({ event, videos }: Props) => {
+const CostumeYouTubeVideoEditor = ({ costume, videos }: Props) => {
   const [searchType, setSearchType] = useState<'title' | 'date'>('title')
   const [showShort, setShowShort] = useState(false)
-  const [state, dispatch] = useFormState(eventYouTubeVideoEditorAction, {
+  const [state, dispatch] = useFormState(costumeYouTubeVideoEditorAction, {
     items: [],
   })
   return (
     <form action={dispatch} className="flex flex-col gap-4">
       <input type="submit" hidden onClick={(e) => e.preventDefault()} />
-      <input type="hidden" name="event_id" value={event.id} />
+      <input type="hidden" name="costume_id" value={costume.id} />
       <div className="w-full flex flex-col gap-4 text-sm">
         <FormItem label="追加">
           <div className="flex flex-col gap-2">
@@ -87,7 +87,6 @@ const EventYouTubeVideoEditor = ({ event, videos }: Props) => {
                     <input
                       type="date"
                       name="date"
-                      defaultValue={event.date}
                       className="w-64 px-2 py-1 border rounded"
                     />
                     <ActionButton
@@ -121,7 +120,6 @@ const EventYouTubeVideoEditor = ({ event, videos }: Props) => {
           </div>
         </FormItem>
         <FormItem label="削除">
-          <input type="hidden" name="event_id" value={event.id} />
           <table className="w-full [&_td]:px-1">
             <thead className="text-gray-500">
               <tr>
@@ -157,4 +155,4 @@ const EventYouTubeVideoEditor = ({ event, videos }: Props) => {
   )
 }
 
-export default EventYouTubeVideoEditor
+export default CostumeYouTubeVideoEditor

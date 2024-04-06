@@ -111,6 +111,8 @@ export const listYouTubeVidoesBySong = (
     { tags: [`youtube-videos-by-song-${songId}`] }
   )
 
+export const youtubeVideosByCostumeTag = (costumeId: number) =>
+  `youtube-videos-by-costume-${costumeId}`
 export const listYouTubeVideosByCostume = (costumeId: number) =>
   unstable_cache(
     async () => {
@@ -131,8 +133,8 @@ export const listYouTubeVideosByCostume = (costumeId: number) =>
       })
       return videos
     },
-    [`youtube-videos-by-costume-${costumeId}`],
-    { tags: [`youtube-videos-by-costume-${costumeId}`] }
+    [youtubeVideosByCostumeTag(costumeId)],
+    { tags: [youtubeVideosByCostumeTag(costumeId)] }
   )
 
 export const youTubeVideosByWordTag = (word: string) => `youtube-videos-word-${word}`

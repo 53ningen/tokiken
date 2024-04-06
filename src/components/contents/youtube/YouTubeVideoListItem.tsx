@@ -5,7 +5,7 @@ interface Props {
   video: YouTubeVideo
 }
 
-const EventYouTubeVideoListItem = ({ video }: Props) => {
+const YouTubeVideoListItem = ({ video }: Props) => {
   return (
     <div key={video.id} className="relative rounded overflow-hidden aspect-video">
       <a href={youtubeVideoUrl(video.id)} target="_blank" rel="noopener noreferrer">
@@ -23,4 +23,4 @@ const EventYouTubeVideoListItem = ({ video }: Props) => {
   )
 }
 
-export default EventYouTubeVideoListItem
+export default YouTubeVideoListItem

@@ -10,6 +10,7 @@ import CostumeTweets from '@/components/costumes/CostumeDetails/CostumeTweets'
 import CostumeYouTubeVideos from '@/components/costumes/CostumeDetails/CostumeYouTubeVideos'
 import CostumeEditor from '@/components/costumes/Editor/CostumeEditor'
 import { CostumeImagesEditorWrapper } from '@/components/costumes/Editor/CostumeImagesEditorServer'
+import CostumeYouTubeVideoEditorWrapper from '@/components/costumes/Editor/CostumeYouTubeVideoEditorWrapper'
 import { getCostume } from '@/db/costumes'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -87,6 +88,7 @@ const Costume = async ({ params }: Props) => {
         </div>
         <div>
           <SectionHeading title="📱 関連 YouTube 動画" />
+          <CostumeYouTubeVideoEditorWrapper costume={costume} />
           <Preview>
             <CostumeYouTubeVideos costumeId={costume.id} />
           </Preview>
