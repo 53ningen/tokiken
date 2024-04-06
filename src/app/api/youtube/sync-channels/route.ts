@@ -66,7 +66,7 @@ const syncYouTubeChannels = async () => {
           channel.title !== retrivedChannel.snippet?.title ||
           channel.thumbnail_url !== retrivedChannel.snippet?.thumbnails?.medium?.url
         if (needUpdate) {
-          prisma.youtube_channels.update({
+          await prisma.youtube_channels.update({
             where: {
               id: channel.id,
             },

@@ -7,7 +7,7 @@ import SectionHeading from '@/components/commons/SectionHeading'
 import Title from '@/components/commons/Title'
 import ChannelCollection from '@/components/contents/youtube/ChannelCollection/ChannelCollection'
 import PutVideoForm from '@/components/contents/youtube/Editor/PutVideoForm'
-import SyncYouTubeChannelsForm from '@/components/contents/youtube/Editor/SyncYouTubeChannelsForm'
+import YouTubeChannelsEditor from '@/components/contents/youtube/Editor/YouTubeChannelsEditor'
 import CostumeEditor from '@/components/costumes/Editor/CostumeEditor'
 import RevalidateTagForm from '@/components/dashboard/RevalidateTagForm'
 import ArtistEditor from '@/components/dashboard/artists/ArtistEditor'
@@ -51,7 +51,7 @@ const Dashboard = async () => {
               <PutVideoForm />
             </FormItem>
             <FormItem label="チャンネル同期">
-              <SyncYouTubeChannelsForm />
+              <YouTubeChannelsEditor />
               <Preview>
                 <ChannelCollection />
               </Preview>

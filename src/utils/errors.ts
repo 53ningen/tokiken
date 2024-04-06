@@ -7,4 +7,5 @@ export const Errors = {
   NotFound: { message: 'リソースが見つかりません' },
   NotAuthorized: { message: '権限がありません' },
   AlreadyExists: { message: '既に登録されています' },
+  YouTubeAPIError: { message: 'YouTube API 連携エラーが発生しました' },
 }
