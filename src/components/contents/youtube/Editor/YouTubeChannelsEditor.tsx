@@ -9,7 +9,7 @@ const YouTubeChannelsEditor = () => {
   const [state, dispatch] = useFormState(youtubeChannelsEditorAction, {})
   return (
     <form action={dispatch} className="flex flex-col gap-2">
-      <div>
+      <div className="text-right">
         <ActionButton>チャンネルデータ更新</ActionButton>
       </div>
       {state.error && <Alert type="error" message={state.error} />}

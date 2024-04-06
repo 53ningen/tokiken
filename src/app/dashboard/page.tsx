@@ -6,8 +6,8 @@ import Preview from '@/components/commons/Preview'
 import SectionHeading from '@/components/commons/SectionHeading'
 import Title from '@/components/commons/Title'
 import ChannelCollection from '@/components/contents/youtube/ChannelCollection/ChannelCollection'
-import PutVideoForm from '@/components/contents/youtube/Editor/PutVideoForm'
 import YouTubeChannelsEditor from '@/components/contents/youtube/Editor/YouTubeChannelsEditor'
+import PutVideoForm from '@/components/contents/youtube/Editor/YouTubeVideoEditor'
 import CostumeEditor from '@/components/costumes/Editor/CostumeEditor'
 import RevalidateTagForm from '@/components/dashboard/RevalidateTagForm'
 import ArtistEditor from '@/components/dashboard/artists/ArtistEditor'
@@ -47,14 +47,14 @@ const Dashboard = async () => {
         <div className="flex flex-col">
           <SectionHeading title="🎬 YouTube データ管理" />
           <div className="grid gap-8 text-left">
-            <FormItem label="動画追加">
+            <FormItem label="動画">
               <PutVideoForm />
             </FormItem>
-            <FormItem label="チャンネル同期">
-              <YouTubeChannelsEditor />
+            <FormItem label="チャンネル">
               <Preview>
                 <ChannelCollection />
               </Preview>
+              <YouTubeChannelsEditor />
             </FormItem>
           </div>
         </div>
