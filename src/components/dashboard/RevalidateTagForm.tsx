@@ -1,47 +1,56 @@
 'use client'
 
-import { Either } from '@/utils/either'
-import { useRef, useState } from 'react'
-import { revalidateTag } from './RevalidateTagAction'
+import { costumesTag } from '@/db/costumes'
+import {
+  eventArticlesTag,
+  eventCastsTag,
+  eventCostumesTag,
+  eventPlaceTag,
+  eventTweetsTag,
+  eventsTag,
+} from '@/db/events'
+import { useFormState } from 'react-dom'
+import ActionButton from '../commons/ActionButton'
+import Alert from '../commons/Alert'
+import FormItem from '../commons/FormItem'
+import { revalidateTagAction } from './RevalidateTagAction'
+
+const options: string[] = [
+  'songs',
+  'tweets',
+  costumesTag,
+  eventsTag(2015, 4),
+  eventCostumesTag(0),
+  eventTweetsTag(0),
+  eventArticlesTag(0),
+  eventCastsTag(0),
+  eventPlaceTag(0),
+].sort()
 
 const RevalidateTagForm = () => {
-  const ref = useRef<HTMLFormElement>(null)
-  const [result, setResult] = useState<Either<string, string>>()
+  const [state, dispatch] = useFormState(revalidateTagAction, {})
   return (
-    <form
-      ref={ref}
-      action={async (data) => {
-        const res = await revalidateTag(data)
-        setResult(res)
-        res.isRight && ref.current?.reset()
-      }}
-      className="grid gap-2 text-sm">
-      <div className="flex items-center [&>*]:mr-4">
-        <label htmlFor="tag" className="block font-bold">
-          Tag Name
-        </label>
-        <input
-          id="tag"
-          name="tag"
-          required
-          type="text"
-          list="tags"
-          className="border rounded w-64 py-1 px-3"
-        />
-        <datalist id="tags">
-          <option value="songs">songs</option>
-        </datalist>
-        <button
-          type="submit"
-          className="bg-primary hover:bg-secondary text-white font-bold py-1 px-4 rounded">
-          Revalidate
-        </button>
-      </div>
-      {result && (
-        <div className={`${result.isLeft ? 'text-red-500' : 'text-blue-500'}`}>
-          {result.value}
+    <form key={JSON.stringify(state)} action={dispatch}>
+      <FormItem label="削除">
+        <div className="flex gap-2">
+          <input
+            id="tag"
+            name="tag"
+            required
+            type="text"
+            list="tags"
+            autoComplete="off"
+            className="border rounded py-1 px-3"
+          />
+          <datalist id="tags">
+            {options.map((option) => (
+              <option key={option} value={option} />
+            ))}
+          </datalist>
+          <ActionButton actionType="delete">キャッシュ削除</ActionButton>
         </div>
-      )}
+        {state.error && <Alert type="error" message={state.error} />}
+      </FormItem>
     </form>
   )
 }
