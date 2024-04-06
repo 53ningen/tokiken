@@ -3,8 +3,7 @@
 import { Event, EventType, listEventPlaces } from '@/db/events'
 import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
-import { isAdminUserServer, isAssociateUserServer } from '@/utils/amplify'
-import { Either, left, right } from '@/utils/either'
+import { isAssociateUserServer } from '@/utils/amplify'
 import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 import EventEditor from './EventEditor'
@@ -18,11 +17,27 @@ export const EventEditorWrapper = async ({ event }: Props) => {
   return <EventEditor event={event} places={places} />
 }
 
-export const createEvent = async (data: FormData): Promise<Either<string, Event>> => {
-  if (!(await isAdminUserServer())) {
-    return left('Administrator permission required, please contact with @kusabure.')
+interface State {
+  error?: string
+  event?: Event
+}
+
+export const eventEditorAction = async (_: State, data: FormData): Promise<State> => {
+  if (!(await isAssociateUserServer())) {
+    return { error: Errors.NeedAssociatePermission.message }
   }
 
+  const action = data.get('action') as string
+  if (action === 'insert') {
+    createEvent(data)
+  }
+  if (action === 'update') {
+    updateEvent(data)
+  }
+  return { error: Errors.InvalidRequest.message }
+}
+
+export const createEvent = async (data: FormData): Promise<State> => {
   const title = data.get('title') as string
   const type = data.get('type') as EventType
   const date = data.get('date') as string
@@ -30,7 +45,7 @@ export const createEvent = async (data: FormData): Promise<Either<string, Event>
   const rawPlaceId = parseInt(data.get('place_id') as string)
   const place_id = isNaN(rawPlaceId) ? undefined : rawPlaceId
   if (!title || !type || !date) {
-    return left('invalid data')
+    return { error: Errors.InvalidRequest.message }
   }
   try {
     const exists = await prisma.events.findFirst({
@@ -41,7 +56,7 @@ export const createEvent = async (data: FormData): Promise<Either<string, Event>
       },
     })
     if (exists) {
-      return left(Errors.AlreadyExists.message)
+      return { error: Errors.AlreadyExists.message }
     }
     const params = {
       data: {
@@ -59,18 +74,14 @@ export const createEvent = async (data: FormData): Promise<Either<string, Event>
     )
     const yyyymm = new Date(date).toISOString().slice(0, 7)
     revalidateTag(`events-${yyyymm}`)
-    return right(event)
+    return { event }
   } catch (e) {
     console.log(e)
-    return left(`create failed`)
+    return { error: Errors.DatabaseError.message }
   }
 }
 
-export const updateEvent = async (data: FormData): Promise<Either<string, Event>> => {
-  if (!(await isAssociateUserServer())) {
-    return left('Unauthorized')
-  }
-
+export const updateEvent = async (data: FormData): Promise<State> => {
   const id = parseInt(data.get('id') as string)
   const title = data.get('title') as string
   const type = data.get('type') as EventType
@@ -79,7 +90,7 @@ export const updateEvent = async (data: FormData): Promise<Either<string, Event>
   const rawPlaceId = parseInt(data.get('place_id') as string)
   const place_id = isNaN(rawPlaceId) ? undefined : rawPlaceId
   if (isNaN(id) || !title || !type || !date) {
-    return left('invalid data')
+    return { error: Errors.InvalidRequest.message }
   }
   try {
     const params = {
@@ -102,9 +113,9 @@ export const updateEvent = async (data: FormData): Promise<Either<string, Event>
     const yyyymm = new Date(date).toISOString().slice(0, 7)
     revalidateTag(`events-${yyyymm}`)
     revalidateTag(`event-${id}`)
-    return right(event)
+    return { event }
   } catch (e) {
     console.log(e)
-    return left(`create failed`)
+    return { error: Errors.DatabaseError.message }
   }
 }

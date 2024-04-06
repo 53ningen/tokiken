@@ -1,23 +1,18 @@
 'use client'
+import ActionButton from '@/components/commons/ActionButton'
+import Alert from '@/components/commons/Alert'
 import FormItem from '@/components/commons/FormItem'
 import { prefectures } from '@/consts/region'
-import { Either } from '@/utils/either'
-import { useRef, useState } from 'react'
-import { createEventPlace } from './EventPlaceAction'
+import { useRef } from 'react'
+import { useFormState } from 'react-dom'
+import { eventPlaceAction } from './EventPlaceAction'
 
 const EventPlaceEditor = () => {
   const ref = useRef<HTMLFormElement>(null)
-  const [result, setResult] = useState<Either<string, string>>()
+  const [state, dispatch] = useFormState(eventPlaceAction, {})
   return (
-    <div>
-      <form
-        action={async (data) => {
-          const res = await createEventPlace(data)
-          setResult(res)
-          res.isRight && ref.current?.reset()
-        }}
-        className="grid gap-2"
-        ref={ref}>
+    <div key={JSON.stringify(state)}>
+      <form action={dispatch} className="grid gap-2" ref={ref}>
         <FormItem id="name" label="会場名*">
           <input
             id="name"
@@ -66,19 +61,16 @@ const EventPlaceEditor = () => {
             className="w-full border rounded py-1 px-3"
           />
         </FormItem>
+        {state.error && <Alert message={state.error} type="error" />}
+        {state.eventPlace && (
+          <Alert message={`${state.eventPlace.name} が追加されました`} type="success" />
+        )}
         <div className="text-right">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-1 px-4 rounded inline-block">
+          <ActionButton name="action" value="insert">
             イベント会場情報作成
-          </button>
+          </ActionButton>
         </div>
       </form>
-      {result && (
-        <div className={`${result.isLeft ? 'text-red-500' : 'text-blue-500'}`}>
-          {result.value}
-        </div>
-      )}
     </div>
   )
 }

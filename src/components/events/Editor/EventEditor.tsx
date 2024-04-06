@@ -15,8 +15,8 @@ interface Props {
 }
 
 const EventEditor = ({ event, places }: Props) => {
-  const prefs = prefectures.filter((p) => places.map((p) => p.region).includes(p))
   const [state, dispatch] = useFormState(eventEditorAction, {})
+  const prefs = prefectures.filter((p) => places.map((p) => p.region).includes(p))
   const [prefecture, setPrefecture] = useState<string>()
   const ref = useRef<HTMLFormElement>(null)
   useEffect(() => {

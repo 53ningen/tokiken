@@ -1,29 +1,41 @@
 'use server'
 
+import { EventPlace } from '@/db/events'
 import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
-import { isAdminUserServer } from '@/utils/amplify'
-import { Either, left, right } from '@/utils/either'
+import { isAssociateUserServer } from '@/utils/amplify'
 import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 
-export const createEventPlace = async (
-  data: FormData
-): Promise<Either<string, string>> => {
-  if (!(await isAdminUserServer())) {
-    return left(Errors.NeedAdminPermission.message)
+interface State {
+  error?: string
+  eventPlace?: EventPlace
+}
+
+export const eventPlaceAction = async (_: State, data: FormData): Promise<State> => {
+  if (!(await isAssociateUserServer())) {
+    return { error: Errors.NeedAssociatePermission.message }
   }
 
+  const action = data.get('action') as string
+  if (action === 'insert') {
+    const res = await createEventPlace(data)
+    return res
+  }
+  return { error: Errors.InvalidRequest.message }
+}
+
+export const createEventPlace = async (data: FormData): Promise<State> => {
   const name = data.get('name') as string
   const kana = data.get('kana') as string
   const region = data.get('region') as string
   const address = data.get('address') as string
   if (!name || !kana || !region || !address) {
-    return left('invalid data')
+    return { error: Errors.InvalidRequest.message }
   }
   const kanaIsHiragana = /^[a-zA-Z0-9ぁ-んー－]+$/.test(kana)
   if (!kanaIsHiragana) {
-    return left(Errors.InvalidRequest.message)
+    return { error: Errors.InvalidRequest.message }
   }
 
   try {
@@ -33,7 +45,7 @@ export const createEventPlace = async (
       },
     })
     if (exists) {
-      return left(Errors.AlreadyExists.message)
+      return { error: Errors.AlreadyExists.message }
     }
     const params = {
       data: {
@@ -49,9 +61,9 @@ export const createEventPlace = async (
       params
     )
     revalidateTag('event-places')
-    return right(`created: ${JSON.stringify(res)}`)
+    return { eventPlace: res }
   } catch (e) {
     console.log(e)
-    return left(Errors.DatabaseError.message)
+    return { error: Errors.DatabaseError.message }
   }
 }
