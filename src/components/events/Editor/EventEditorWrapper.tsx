@@ -76,7 +76,7 @@ export const createEvent = async (data: FormData): Promise<State> => {
     revalidateTag(`events-${yyyymm}`)
     return { event }
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return { error: Errors.DatabaseError.message }
   }
 }
@@ -115,7 +115,7 @@ export const updateEvent = async (data: FormData): Promise<State> => {
     revalidateTag(`event-${id}`)
     return { event }
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return { error: Errors.DatabaseError.message }
   }
 }

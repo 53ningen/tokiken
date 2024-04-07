@@ -100,6 +100,5 @@ const processItem = (item: string) => {
       ''
     )
     .toLowerCase()
-  console.log(replacedItem)
   return replacedItem
 }

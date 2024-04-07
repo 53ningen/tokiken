@@ -89,7 +89,6 @@ const extractTweetId = (rawInput: string) => {
     rawInput.startsWith('https://twitter.com/') && rawInput.includes('/status/')
   if (isUrl) {
     const tweetId = rawInput.split('/status/')[1]
-    console.log(tweetId)
     return tweetId
   } else if (/^\d+$/.test(rawInput)) {
     return rawInput

@@ -51,7 +51,6 @@ export const updateCredit = async (state: State, data: FormData): Promise<State>
   const update = action.match(/update:(\d+)/)
   const updateIndex = parseInt(update ? update[1] : '')
   if (!isNaN(updateIndex) && updateIndex >= 0) {
-    console.log(data)
     const res = await updateRow(state, data, event_id, updateIndex)
     return res
   }

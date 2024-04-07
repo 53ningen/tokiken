@@ -40,7 +40,6 @@ export const eventArticleEditorAction = async (
 
   // 検索ワードで記事を検索
   if (action === 'search-by-title') {
-    console.log('search-by-title')
     const word = data.get('word') as string
     if (!word || word.length < 3) {
       return { ...state, error: Errors.InvalidRequest.message }
@@ -56,7 +55,6 @@ export const eventArticleEditorAction = async (
 
   // 日付で記事を検索
   if (action === 'search-by-date') {
-    console.log('search-by-date')
     const date = data.get('date') as string
     if (!date) {
       return { ...state, error: Errors.InvalidRequest.message }

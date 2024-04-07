@@ -81,7 +81,6 @@ export const youTubeVideoEditorAction = async (
     ]
     for (const tag of tags) {
       revalidateTag(tag)
-      console.log(`RevalidateTag: ${tag}`)
     }
     return { video: v }
   } catch (e) {

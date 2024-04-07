@@ -63,7 +63,7 @@ export const createEventPlace = async (data: FormData): Promise<State> => {
     revalidateTag('event-places')
     return { eventPlace: res }
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return { error: Errors.DatabaseError.message }
   }
 }

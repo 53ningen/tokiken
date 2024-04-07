@@ -47,7 +47,6 @@ export const addEventTweet = async (
     return left('tweet_id or url is required')
   }
   const tweet_id = extractTweetId(rawTweetInput)
-  console.log(tweet_id)
   if (!tweet_id) {
     return left('tweet_id or url is required')
   }
@@ -109,7 +108,6 @@ const extractTweetId = (rawInput: string) => {
     rawInput.startsWith('https://twitter.com/') && rawInput.includes('/status/')
   if (isUrl) {
     const tweetId = rawInput.split('/status/')[1]
-    console.log(tweetId)
     return tweetId
   } else if (/^\d+$/.test(rawInput)) {
     return rawInput

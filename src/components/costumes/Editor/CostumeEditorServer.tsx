@@ -16,7 +16,6 @@ export const costumeEditorAction = async (_: State, data: FormData): Promise<Sta
   if (!(await isAdminUserServer())) {
     return { error: Errors.NeedAdminPermission.message }
   }
-  console.log(data)
   const id = parseInt(data.get('id') as string)
   const slug = data.get('slug') as string
   const name = data.get('name') as string
