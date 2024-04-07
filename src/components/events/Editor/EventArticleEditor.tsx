@@ -118,7 +118,7 @@ const EventArticleEditor = ({ event, articles }: Props) => {
               {articles.map((article) => (
                 <tr key={article.id}>
                   <td className="text-nowrap">{article.published_at}</td>
-                  <td className="w-full overflow-hidden text-nowrap text-ellipsis">
+                  <td className="w-full">
                     <a href={article.url} target="_blank">
                       {article.title}
                     </a>

@@ -1,4 +1,5 @@
 import ArticleEditor from '@/components/articles/Edit/ArticleEditor'
+import ArticleSynchronizer from '@/components/articles/Edit/ArticleSynchronizer'
 import Alert from '@/components/commons/Alert'
 import Container from '@/components/commons/Container'
 import FormItem from '@/components/commons/FormItem'
@@ -85,6 +86,12 @@ const Dashboard = async () => {
           <SectionHeading title="📙 記事追加 [Admin Only]" />
           <div className="grid gap-8 text-left">
             <ArticleEditor />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <SectionHeading title="📙 記事同期 [Admin Only]" />
+          <div className="grid gap-8 text-left">
+            <ArticleSynchronizer />
           </div>
         </div>
         <div>

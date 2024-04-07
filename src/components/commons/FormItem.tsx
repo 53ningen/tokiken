@@ -8,7 +8,7 @@ type Props = {
 
 const FormItem = ({ id, label, children, className, ...props }: Props) => {
   return (
-    <div className={`flex items-center ${className}`} {...props}>
+    <div className={`flex gap-2 items-center ${className}`} {...props}>
       <label htmlFor={id} className="block font-bold w-36">
         {label}
       </label>

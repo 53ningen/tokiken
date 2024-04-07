@@ -4,6 +4,8 @@ import { unstable_cache } from 'next/cache'
 
 export type Article = articles
 
+export const articlesTag = 'articles'
+
 export const articlesByWordTag = (word: string) => `articles-word-${word}`
 export const searchArticlesByWord = (word: string) =>
   unstable_cache(
@@ -19,7 +21,7 @@ export const searchArticlesByWord = (word: string) =>
       return articles
     },
     [articlesByWordTag(word)],
-    { tags: [articlesByWordTag(word)], revalidate: 60 * 60 }
+    { tags: [articlesByWordTag(word), articlesTag], revalidate: 60 * 60 }
   )
 
 export const articlesByDateTag = (date: string) => `articles-date-${date.slice(0, 7)}`
@@ -43,5 +45,5 @@ export const searchArticlesByDate = (date: string) =>
       return articles
     },
     [articlesByDateTag(date)],
-    { tags: [articlesByDateTag(date)], revalidate: 60 * 60 }
+    { tags: [articlesByDateTag(date), articlesTag], revalidate: 60 * 60 }
   )
