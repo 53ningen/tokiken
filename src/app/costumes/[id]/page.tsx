@@ -52,23 +52,35 @@ const Costume = async ({ params }: Props) => {
   return (
     <Container className="max-w-screen-lg text-center px-2 md:px-2 py-4">
       <Breadcrumbs items={[{ name: '衣装データベース', href: '/costumes' }]} />
-      <CostumeMetadata costume={costume} />
-      <AuthContainer>
-        <div className="my-2 text-left">
-          <Link href={`/costumes/${costume.id}/edit`} className="text-primary">
-            🔒 編集する
-          </Link>
+      <div className="flex flex-col gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-8">
+          <div className="xs:block md:hidden">
+            <CostumeMetadata costume={costume} />
+            <AuthContainer>
+              <div className="my-2 text-left">
+                <Link href={`/costumes/${costume.id}/edit`} className="text-primary">
+                  🔒 編集する
+                </Link>
+              </div>
+            </AuthContainer>
+          </div>
+          <div>
+            <CostumeDetailImagesWrapper costume={costume} />
+          </div>
+          <div className="hidden md:block">
+            <CostumeMetadata costume={costume} />
+            <AuthContainer>
+              <div className="my-2 text-left">
+                <Link href={`/costumes/${costume.id}/edit`} className="text-primary">
+                  🔒 編集する
+                </Link>
+              </div>
+            </AuthContainer>
+          </div>
         </div>
-      </AuthContainer>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
-        <div className="flex-none">
-          <CostumeDetailImagesWrapper costume={costume} />
-        </div>
-        <div>
-          <CostumeTweets costumeId={costume.id} />
-        </div>
+        <CostumeTweets costumeId={costume.id} />
+        <CostumeYouTubeVideos costumeId={costume.id} />
       </div>
-      <CostumeYouTubeVideos costumeId={costume.id} />
     </Container>
   )
 }

@@ -12,7 +12,7 @@ const CostumeMetadata = ({ costume }: Props) => {
   const { name, type, is_official_name, events: event } = costume
   const typeLabel = getCostumeTypeLabel(type)
   return (
-    <div className="py-4 text-left grid gap-1 [&_]:text-xs [&_]:text-gray-500">
+    <div className="text-left grid gap-1 [&_]:text-xs [&_]:text-gray-500">
       <div>
         <span className="pr-1">衣装呼称タイプ:</span>
         <span> {is_official_name ? '公式' : '非公式'}</span>
