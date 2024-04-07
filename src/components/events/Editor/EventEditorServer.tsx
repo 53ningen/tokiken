@@ -36,7 +36,7 @@ const updateEvent = async (state: State, e: Event): Promise<State> => {
     const params = { data: e, where: { id: e.id } }
     const event = await executeQueryWithLogging(
       prisma.events.update(params),
-      'events.create',
+      'events.update',
       params
     )
     return { event, error: undefined }
