@@ -50,6 +50,12 @@ const RevalidateTagForm = () => {
           <ActionButton actionType="delete">キャッシュ削除</ActionButton>
         </div>
         {state.error && <Alert type="error" message={state.error} />}
+        {state.revalidated && (
+          <Alert
+            type="error"
+            message={`キャッシュ: ${state.revalidated} の削除が完了しました`}
+          />
+        )}
       </FormItem>
     </form>
   )

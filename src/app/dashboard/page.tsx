@@ -1,3 +1,4 @@
+import ArticleEditor from '@/components/articles/Edit/ArticleEditor'
 import Alert from '@/components/commons/Alert'
 import Container from '@/components/commons/Container'
 import FormItem from '@/components/commons/FormItem'
@@ -62,7 +63,6 @@ const Dashboard = async () => {
           <SectionHeading title="📄 コンテンツデータ管理" />
           <div className="grid gap-8 text-left">
             <FormItem label="ブログ同期"></FormItem>
-            <FormItem label="記事追加"></FormItem>
             <FormItem label="記事同期"></FormItem>
             <FormItem label="ツイート同期"></FormItem>
           </div>
@@ -84,7 +84,7 @@ const Dashboard = async () => {
         <div className="flex flex-col">
           <SectionHeading title="📙 記事追加 [Admin Only]" />
           <div className="grid gap-8 text-left">
-            <FormItem label="追加"></FormItem>
+            <ArticleEditor />
           </div>
         </div>
         <div>

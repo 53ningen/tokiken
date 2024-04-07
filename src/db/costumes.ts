@@ -43,7 +43,7 @@ export const listCostumeImages = (id: number) =>
 export const costumesTag = 'costumes'
 export const listCostumes = unstable_cache(
   async () => {
-    const costumes = prisma.costumes.findMany({
+    const costumes = await prisma.costumes.findMany({
       include: {
         artists: true,
         costume_images: {
