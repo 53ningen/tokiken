@@ -85,6 +85,7 @@ const extractData = (data: FormData) => {
   const id = parseInt(data.get('id') as string)
   const title = data.get('title') as string
   const type = data.get('type') as EventType
+  const hashtags = data.get('hashtags') as string
   const date = data.get('date') as string
   const start = data.get('start') as string
   const place_id = parseInt(data.get('place_id') as string)
@@ -96,6 +97,7 @@ const extractData = (data: FormData) => {
     id: isNaN(id) ? null : id,
     title,
     type,
+    hashtags: hashtags === '' ? null : hashtags,
     date,
     start: start === '' ? null : start,
     place_id: isNaN(place_id) ? null : place_id,

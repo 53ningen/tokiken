@@ -52,6 +52,17 @@ const EventEditor = ({ event, places }: Props) => {
           <option value="OTHER">その他</option>
         </select>
       </FormItem>
+      <FormItem id="type" label="ハッシュタグ">
+        <input
+          id="hashtags"
+          name="hashtags"
+          placeholder="ハッシュタグ(カンマ区切り)"
+          defaultValue={event?.hashtags || undefined}
+          type="text"
+          autoComplete="off"
+          className="border rounded w-full py-1 px-3"
+        />
+      </FormItem>
       <FormItem id="date" label="開催日時*">
         <div className="flex gap-4">
           <input

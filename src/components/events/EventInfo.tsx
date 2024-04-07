@@ -27,6 +27,19 @@ const EventInfo = async ({ event }: Props) => {
           </Link>
         </div>
       )}
+      {event.hashtags && (
+        <div className="flex gap-1 text-xs text-gray-500">
+          <span>ハッシュタグ:</span>
+          {event.hashtags.split(',').map((hashtag) => (
+            <Link
+              key={hashtag}
+              href={`https://twitter.com/hashtag/${encodeURIComponent(hashtag)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary">{`#${hashtag}`}</Link>
+          ))}
+        </div>
+      )}
       <div className="[&_div]:inline-block text-xs items-center text-gray-500">
         <EventCastList event={event} />
       </div>

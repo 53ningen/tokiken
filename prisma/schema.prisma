@@ -23,6 +23,8 @@ model articles {
   published_at   String?          @db.VarChar(255)
   thumbnail_url  String?          @db.VarChar(255)
   event_articles event_articles[]
+
+  @@index([published_at], map: "published_at")
 }
 
 model artists {
@@ -202,6 +204,7 @@ model events {
   start                String?                @db.VarChar(31)
   place_id             Int?
   note                 String?                @db.Text
+  hashtags             String?                @db.VarChar(255)
   costumes             costumes[]
   event_articles       event_articles[]
   event_casts          event_casts[]
