@@ -226,6 +226,15 @@ export const ArticleSites: ArticleSite[] = [
         return { ...basicInfo, published_at }
       }
     },
+    syncUrl: (i) =>
+      `https://thetv.jp/news/tag/%E8%B6%85%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E5%AE%A3%E4%BC%9D%E9%83%A8/p${i}/`,
+    parseArticleList: (_, dom) => {
+      const urls = dom.querySelectorAll('div.news_results > ul > li > a').flatMap((a) => {
+        const href = a.getAttribute('href')
+        return href ? [`https://thetv.jp${href}`.split('?')[0]] : []
+      })
+      return urls
+    },
   },
   {
     id: 'ntvnews',
