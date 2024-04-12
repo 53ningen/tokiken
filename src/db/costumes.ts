@@ -51,6 +51,9 @@ export const listCostumes = unstable_cache(
         artists: true,
         costume_images: {
           take: 1,
+          orderBy: {
+            display_order: 'asc',
+          },
         },
       },
       orderBy: {
