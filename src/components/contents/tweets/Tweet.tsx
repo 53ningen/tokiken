@@ -9,26 +9,30 @@ const Tweet = ({ status }: Props) => {
   return (
     <div className="flex flex-col justify-between gap-2 border rounded p-2 hover:bg-gray-100">
       <div>
-        <div className="flex gap-2">
-          <Link
-            href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
-            rel="noopener noreferrer"
-            className="font-bold text-sm"
-            target="_blank">
-            <img
-              src={status.tweet_authors.icon_url!}
-              alt={status.tweet_authors.user_name}
-              className="w-10 h-10 rounded-full"
-            />
-          </Link>
-          <div className="grid overflow-hidden text-nowrap">
+        <div className="flex gap-2 items-center">
+          <div className="shrink-0">
             <Link
               href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
               rel="noopener noreferrer"
               className="font-bold text-sm"
               target="_blank">
-              {status.tweet_authors.user_name}
+              <img
+                src={status.tweet_authors.icon_url!}
+                alt={status.tweet_authors.user_name}
+                className="w-10 aspect-square rounded-full"
+              />
             </Link>
+          </div>
+          <div className="flex flex-col overflow-hidden">
+            <div className="overflow-hidden text-nowrap text-ellipsis">
+              <Link
+                href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
+                rel="noopener noreferrer"
+                className="font-bold text-sm"
+                target="_blank">
+                {status.tweet_authors.user_name}
+              </Link>
+            </div>
             <Link
               href={`https://twitter.com/${status.screen_name}/status/${status.id}`}
               rel="noopener noreferrer"
@@ -38,7 +42,7 @@ const Tweet = ({ status }: Props) => {
             </Link>
           </div>
         </div>
-        <pre className="p-2 my-2 text-xs whitespace-pre-wrap">{status.text}</pre>
+        <pre className="pt-2 text-xs whitespace-pre-wrap">{status.text}</pre>
       </div>
       <div>
         {status.image_urls && (
@@ -52,7 +56,7 @@ const Tweet = ({ status }: Props) => {
                 src={status.image_urls.split(',')[0]}
                 alt="tweet-image"
                 loading="lazy"
-                className="w-full aspect-video object-cover rounded"
+                className="w-full aspect-video sm:aspect-square object-cover rounded"
               />
             </Link>
           </div>
