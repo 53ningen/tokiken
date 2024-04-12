@@ -33,6 +33,9 @@ export const listCostumeImages = (id: number) =>
         where: {
           costume_id: id,
         },
+        orderBy: {
+          display_order: 'asc',
+        },
       })
       return images
     },

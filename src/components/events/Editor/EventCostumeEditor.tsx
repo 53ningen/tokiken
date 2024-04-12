@@ -48,7 +48,7 @@ const EventCostumeEditor = ({ event, eventCostumes, allCostumes }: Props) => {
               name="costume_id"
               id="costume_id"
               required
-              value={selectedCostume?.id}
+              value={selectedCostume?.id || 44}
               onChange={(e) =>
                 setSelectedCostume(
                   allCostumes.find((c) => c.id.toString() === e.currentTarget.value)

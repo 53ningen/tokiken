@@ -126,7 +126,11 @@ export const listEventCostumes = (eventId: number) =>
           display_order: true,
           costumes: {
             include: {
-              costume_images: true,
+              costume_images: {
+                orderBy: {
+                  display_order: 'asc',
+                },
+              },
               artists: true,
             },
           },
