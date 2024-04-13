@@ -1,13 +1,17 @@
 interface Props {
   text: string
   icon?: string
+  className?: string
 }
 
-const Chip = ({ text, icon }: Props) => {
+const Chip = ({ text, icon, className }: Props) => {
   return (
-    <div className="flex gap-1 border p-1 text-xs rounded-full text-gray-500 select-none">
-      {icon && <span>{icon}</span>}
-      <span>{text}</span>
+    <div className="inline-block">
+      <div
+        className={`flex gap-1 border p-1 text-xs rounded-full text-gray-500 select-none ${className}`}>
+        {icon && <span>{icon}</span>}
+        <span>{text}</span>
+      </div>
     </div>
   )
 }

@@ -15,12 +15,12 @@ const ArticleEditor = () => {
         type="info"
         message="情報取得対応サイト: ナタリー,RealSound,Ototoy,PR Times,OK Music"
       />
-      <FormItem label="記事 URL">
+      <FormItem label="URL*">
         <div className="flex gap-2">
           <input
             type="url"
             name="url"
-            placeholder="記事 URL"
+            placeholder="URL"
             defaultValue={state.url}
             autoComplete="off"
             className="border rounded w-full py-1 px-3"
@@ -30,17 +30,17 @@ const ArticleEditor = () => {
           </ActionButton>
         </div>
       </FormItem>
-      <FormItem label="記事タイトル">
+      <FormItem label="タイトル*">
         <input
           type="text"
           name="title"
           defaultValue={state.title}
-          placeholder="記事タイトル"
+          placeholder="タイトル"
           autoComplete="off"
           className="border rounded w-full py-1 px-3"
         />
       </FormItem>
-      <FormItem label="サムネイル URL">
+      <FormItem label="サムネイルURL">
         <div className="flex gap-2">
           {state.thumbnail_url && (
             <img
@@ -53,13 +53,13 @@ const ArticleEditor = () => {
             type="url"
             name="thumbnail_url"
             defaultValue={state.thumbnail_url}
-            placeholder="サムネイル URL"
+            placeholder="サムネイルURL"
             autoComplete="off"
             className="border rounded w-full py-1 px-3"
           />
         </div>
       </FormItem>
-      <FormItem label="投稿日時">
+      <FormItem label="投稿日時*">
         <input
           type="datetime-local"
           name="published_at"

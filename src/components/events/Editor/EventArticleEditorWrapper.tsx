@@ -1,6 +1,6 @@
 'use server'
 
-import { Article, searchArticlesByDate, searchArticlesByWord } from '@/db/articles'
+import { Article, listArticles, searchArticlesByWord } from '@/db/articles'
 import { Event, eventArticlesTag, listEventArticles } from '@/db/events'
 import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
@@ -60,7 +60,9 @@ export const eventArticleEditorAction = async (
       return { ...state, error: Errors.InvalidRequest.message }
     }
     try {
-      const articles = await searchArticlesByDate(date)()
+      const year = parseInt(date.slice(0, 4))
+      const month = parseInt(date.slice(4, 6))
+      const articles = await listArticles(year, month)()
       return { items: articles, error: undefined }
     } catch (e) {
       console.error(e)

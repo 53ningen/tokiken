@@ -1,10 +1,11 @@
 'use server'
 
-import { Article } from '@/db/articles'
+import { Article, articlesDateTag } from '@/db/articles'
 import { executeQueryWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAssociateUserServer } from '@/utils/amplify'
 import { Errors } from '@/utils/errors'
+import { revalidateTag } from 'next/cache'
 import { ulid } from 'ulid'
 import { parseArticle } from './ArticleParser'
 
@@ -32,7 +33,7 @@ export const articleEditorAction = async (
     const title = data.get('title') as string
     const thumbnail_url = data.get('thumbnail_url') as string
     const published_at = data.get('published_at') as string
-    if (!url || !title || !thumbnail_url || !published_at) {
+    if (!url || !title || !published_at) {
       return { ...state, error: Errors.InvalidRequest.message }
     }
     try {
@@ -53,6 +54,9 @@ export const articleEditorAction = async (
         'articles.create',
         params
       )
+      const year = parseInt(published_at.slice(0, 4))
+      const month = parseInt(published_at.slice(5, 7))
+      revalidateTag(articlesDateTag(year, month))
       return { article: res, id: ulid() }
     } catch (e) {
       console.error(e)

@@ -24,7 +24,10 @@ const CalendarPage = async ({ params }: Props) => {
 
   const year = Math.floor(yyyymm / 100)
   const month = yyyymm % 100
-  const isValidDate = 201504 <= yyyymm && yyyymm <= 203512 && 1 <= month && month <= 12
+  const now = new Date()
+  const untilYYYYMM = (now.getFullYear() + 2) * 100 + now.getMonth()
+  const isValidDate =
+    201504 <= yyyymm && yyyymm <= untilYYYYMM && 1 <= month && month <= 12
   if (!isValidDate) {
     notFound()
   }

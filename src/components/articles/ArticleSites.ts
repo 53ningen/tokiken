@@ -53,7 +53,7 @@ export const ArticleSites: ArticleSite[] = [
   },
   {
     id: 'tokisen',
-    label: '超ときめき♡宣伝部公式',
+    label: '超ときめき♡宣伝部',
     articleUrlStartWith: 'https://toki-sen.com/',
     parseArticle: (url, dom) => {
       const basicInfo = extractBasicInfo(url, dom)

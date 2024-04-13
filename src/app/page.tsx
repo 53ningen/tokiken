@@ -30,7 +30,9 @@ export default function Home() {
             { icon: '🎤', name: 'アーティスト', href: '/artists' },
             { icon: '🎬', name: 'YouTube', href: '/youtube' },
             { icon: '👗', name: '衣装', href: '/costumes' },
-            { icon: '🗓️', name: 'カレンダー', href: '/calendar' },
+            { icon: '🗓️', name: 'イベント', href: '/calendar' },
+            { icon: '📝', name: '記事', href: '/articles' },
+            { icon: '🎁', name: 'コンテンツ', href: '/articles', enabled: false },
           ]}
         />
         <MenuSection

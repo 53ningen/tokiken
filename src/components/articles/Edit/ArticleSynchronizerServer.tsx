@@ -1,14 +1,14 @@
 'use server'
 
-import { articlesByDateTag, articlesTag } from '@/db/articles'
+import { articlesDateTag, articlesTag } from '@/db/articles'
 import { executeQueriesWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAdminUserServer } from '@/utils/amplify'
 import { Errors } from '@/utils/errors'
 import { revalidateTag } from 'next/cache'
 import parse from 'node-html-parser'
+import { ArticleSites } from '../ArticleSites'
 import { ArticleInfo, parseArticle } from './ArticleParser'
-import { ArticleSites } from './ArticleSites'
 
 interface State {
   error?: string
@@ -89,7 +89,8 @@ const syncAction = async (state: State): Promise<State> => {
     for (const item of state.items) {
       const published_at = item.published_at
       if (published_at) {
-        revalidateTag(articlesByDateTag(published_at))
+        const d = new Date(published_at)
+        revalidateTag(articlesDateTag(d.getFullYear(), d.getMonth() + 1))
       }
     }
     revalidateTag(articlesTag)

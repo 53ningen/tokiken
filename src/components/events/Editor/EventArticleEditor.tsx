@@ -80,7 +80,7 @@ const EventArticleEditor = ({ event, articles }: Props) => {
                       actionType="update"
                       name="action"
                       value="search-by-date">
-                      前後3ヶ月の記事検索
+                      指定月の記事検索
                     </ActionButton>
                   </div>
                 )}

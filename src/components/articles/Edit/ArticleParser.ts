@@ -1,5 +1,5 @@
 import parse, { HTMLElement } from 'node-html-parser'
-import { ArticleSites } from './ArticleSites'
+import { ArticleSites } from '../ArticleSites'
 
 export interface ArticleInfo {
   url: string

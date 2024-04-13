@@ -4,7 +4,7 @@ import ActionButton from '@/components/commons/ActionButton'
 import Alert from '@/components/commons/Alert'
 import FormItem from '@/components/commons/FormItem'
 import { useFormState } from 'react-dom'
-import { ArticleSites } from './ArticleSites'
+import { ArticleSites } from '../ArticleSites'
 import { articleSynchronizerAction } from './ArticleSynchronizerServer'
 
 interface Props {}
