@@ -92,6 +92,15 @@ export const ArticleSites: ArticleSite[] = [
         return { ...basicInfo, published_at }
       }
     },
+    parseArticleList: (_, dom) => {
+      const urls = dom
+        .querySelectorAll('.entry-list article .entry-thumb > a')
+        .flatMap((a) => {
+          const href = a.getAttribute('href')
+          return href ? [href] : []
+        })
+      return urls
+    },
   },
   {
     id: 'ototoy',
@@ -146,6 +155,19 @@ export const ArticleSites: ArticleSite[] = [
         return { ...basicInfo, published_at }
       }
     },
+    syncUrl: (_) =>
+      `https://prtimes.jp/topics/keywords/%E8%B6%85%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E2%99%A1%E5%AE%A3%E4%BC%9D%E9%83%A8`,
+    parseArticleList: (_, dom) => {
+      const urls = dom
+        .querySelectorAll(
+          'div.container-thumbnail-list article div.thumbnail-title-wrap > a'
+        )
+        .flatMap((a) => {
+          const href = a.getAttribute('href')
+          return href ? [`https://prtimes.jp${href}`.split('?')[0]] : []
+        })
+      return urls
+    },
   },
   {
     id: 'okmusic',
@@ -193,6 +215,16 @@ export const ArticleSites: ArticleSite[] = [
         const published_at = articleDate.replace('T', ' ').slice(0, 16)
         return { ...basicInfo, published_at, url }
       }
+    },
+    syncUrl: (page) => `https://members.barks.jp/artists/barks/1000004939?page=${page}`,
+    parseArticleList: (_, dom) => {
+      const urls = dom
+        .querySelectorAll('ul > li > a.artist-contents-item')
+        .flatMap((a) => {
+          const href = a.getAttribute('href')
+          return href ? [href] : []
+        })
+      return urls
     },
   },
   {
@@ -285,11 +317,220 @@ export const ArticleSites: ArticleSite[] = [
       }
     },
   },
+  {
+    id: 'stardust-web',
+    label: 'STARDUST WEB',
+    articleUrlStartWith: 'https://fc.stardust.co.jp/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      // 2024.04. 現在の形式: 2020.06.22
+      const articleDate = dom.querySelector('article time')?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        const dstring = articleDate.trim().replaceAll('.', '-')
+        const dt = new Date(dstring)
+        const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+        const hhmm = '00:00'
+        const published_at = `${yyyymmdd} ${hhmm}`
+        return { ...basicInfo, published_at, url }
+      }
+    },
+  },
+  {
+    id: 'sportshochi',
+    label: 'スポーツ報知',
+    articleUrlStartWith: 'https://hochi.news/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      // 時刻形式: 2021年2月27日 11時27分
+      const articleDate = dom.querySelector('div.article__wrap time')?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        const dtstring = articleDate
+          .trim()
+          .replace('年', '-')
+          .replace('月', '-')
+          .replace('日', '')
+          .replace('時', ':')
+          .replace('分', '')
+        const dt = new Date(dtstring)
+        const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+        const hhmm = `${dt.getHours().toString().padStart(2, '0')}:${dt
+          .getMinutes()
+          .toString()
+          .padStart(2, '0')}`
+        const published_at = `${yyyymmdd} ${hhmm}`
+        return { ...basicInfo, published_at, url }
+      }
+    },
+    syncUrl: (_) =>
+      `https://hochi.news/search?q=%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E2%99%A1%E5%AE%A3%E4%BC%9D%E9%83%A8`,
+    parseArticleList: (_, dom) => {
+      const urls = dom.querySelectorAll('ul.article-list li a').flatMap((a) => {
+        const href = a.getAttribute('href')
+        return href ? [`https://hochi.news${href}`.split('?')[0]] : []
+      })
+      return urls
+    },
+  },
+  {
+    id: 'towerrecords',
+    label: 'TOWER RECORDS',
+    articleUrlStartWith: 'https://tower.jp/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      // 時刻形式:  2024.1.3
+      var articleDate = dom.querySelector(
+        '.storeAtcl-atclDate > li:first-child'
+      )?.innerText
+      if (!articleDate) {
+        articleDate = dom.querySelector('.inMdl-atclDetailDate p:nth-child(2)')?.innerText
+        if (!articleDate) {
+          return basicInfo
+        }
+      }
+      const dstring = articleDate
+        .trim()
+        .replace('掲載：', '')
+        .replace('掲載日：', '')
+        .replaceAll('/', '-')
+      const dt = new Date(dstring)
+      const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+      const hhmm = '00:00'
+      const published_at = `${yyyymmdd} ${hhmm}`
+      return { ...basicInfo, published_at, url }
+    },
+    syncUrl: (page) =>
+      `https://tower.jp/search/article/%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E2%99%A1%E5%AE%A3%E4%BC%9D%E9%83%A8?page=${page}`,
+    parseArticleList: (_, dom) => {
+      const urls = dom
+        .querySelectorAll('ul li .articleTitle a')
+        .flatMap((a) => {
+          const href = a.getAttribute('href')
+          return href ? [href] : []
+        })
+        .map((a) => `https://tower.jp${a}`)
+      return urls
+    },
+  },
+  {
+    id: 'spice',
+    label: 'SPICE',
+    articleUrlStartWith: 'https://spice.eplus.jp/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      // 時刻形式:  2024.1.3
+      const articleDate = dom.querySelector('.article-detail div.time')?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        const dstring = articleDate.trim().replaceAll('.', '-')
+        const dt = new Date(dstring)
+        const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+        const hhmm = '00:00'
+        const published_at = `${yyyymmdd} ${hhmm}`
+        return { ...basicInfo, published_at, url }
+      }
+    },
+    syncUrl: (page) =>
+      `https://spice.eplus.jp/articles/search?special_flag%5B0%5D=0&keywords%5B0%5D=%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E2%96%BD%E5%AE%A3%E4%BC%9D%E9%83%A8&p=${page}`,
+    parseArticleList: (_, dom) => {
+      const urls = dom
+        .querySelectorAll('ul.article-list li > a:first-child')
+        .flatMap((a) => {
+          const href = a.getAttribute('href')
+          return href ? [href] : []
+        })
+        .map((a) => `https://spice.eplus.jp${a}`)
+      return urls
+    },
+  },
+  {
+    id: 'hustlepress',
+    label: 'HUSTLE PRESS',
+    articleUrlStartWith: 'https://hustlepress.co.jp/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      // 時刻形式:  2021年 1月 05日
+      const articleDate = dom.querySelector('div.post-meta-blog span')?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        const dstring = articleDate
+          .trim()
+          .replaceAll(' ', '')
+          .replace('年', '-')
+          .replace('月', '-')
+          .replace('日', '')
+        const dt = new Date(dstring)
+        const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+        const hhmm = '00:00'
+        const published_at = `${yyyymmdd} ${hhmm}`
+        return { ...basicInfo, published_at, url }
+      }
+    },
+    syncUrl: (page) =>
+      `https://hustlepress.co.jp/page/${page}/?s=%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E2%99%A1%E5%AE%A3%E4%BC%9D%E9%83%A8`,
+    parseArticleList: (_, dom) => {
+      const urls = dom.querySelectorAll('.blogposts-inner h3 a').flatMap((a) => {
+        const href = a.getAttribute('href')
+        return href ? [href] : []
+      })
+      return urls
+    },
+  },
+  {
+    id: 'tbsnewsdig',
+    label: 'TBS NEWS DIG',
+    articleUrlStartWith: 'https://newsdig.tbs.co.jp/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      const articleDate = dom.querySelector('time')?.getAttribute('datetime')
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        // 2023-12-15T18:51:07+09:00
+        const published_at = articleDate.slice(0, 16).replace('T', ' ')
+        return { ...basicInfo, published_at }
+      }
+    },
+  },
+  {
+    id: 'nikkansport',
+    label: '日刊スポーツ',
+    articleUrlStartWith: 'https://www.nikkansports.com/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      const articleDate = dom.querySelector('header.article-title time')?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        const dstring = articleDate
+          .trim()
+          .replace('[', '')
+          .replace(']', '')
+          .replace('年', '-')
+          .replace('月', '-')
+          .replace('日', ' ')
+          .replace('時', ':')
+          .replace('分', '')
+        const dt = new Date(dstring)
+        const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+        const published_at = `${yyyymmdd} ${dt
+          .getHours()
+          .toString()
+          .padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`
+        return { ...basicInfo, published_at, url }
+      }
+    },
+  },
 ]
 
 const extractBasicInfo = (url: string, root: HTMLElement) => {
   const cleanUrl = url.split('?')[0]
-  const title = root.querySelector('title')?.text
+  const title = root.querySelector('title')?.text.trim()
   const meta = root.querySelectorAll('meta')
   const thumbnail_url = meta
     .find((m) => m.getAttribute('property') === 'og:image')

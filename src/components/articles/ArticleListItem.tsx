@@ -19,12 +19,14 @@ const ArticleListItem = ({ article }: Props) => {
       rel="noopener"
       className="block border rounded">
       <div className="flex gap-1 text-sm text-gray-500">
-        <img
-          src={article.thumbnail_url || noImageUrl}
-          alt={article.title}
-          loading="lazy"
-          className="w-28 h-28 aspect-square object-cover rounded-l"
-        />
+        <div className="h-28 aspect-square">
+          <img
+            src={article.thumbnail_url || noImageUrl}
+            alt={article.title}
+            loading="lazy"
+            className="w-28 h-28 aspect-square object-cover rounded-l"
+          />
+        </div>
         <div className="flex flex-col p-1 h-28 overflow-hidden">
           <div>
             <span

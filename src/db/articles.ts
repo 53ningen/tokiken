@@ -24,7 +24,7 @@ export const listArticles = (year: number, month: number) =>
       return articles
     },
     [articlesDateTag(year, month)],
-    { tags: [articlesDateTag(year, month)] }
+    { tags: [articlesDateTag(year, month), articlesTag] }
   )
 
 export const articlesByWordTag = (word: string) => `articles-word-${word}`

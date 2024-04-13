@@ -1,6 +1,6 @@
 'use server'
 
-import { articlesDateTag, articlesTag } from '@/db/articles'
+import { articlesTag } from '@/db/articles'
 import { executeQueriesWithLogging } from '@/db/logs'
 import prisma from '@/db/prisma'
 import { isAdminUserServer } from '@/utils/amplify'
@@ -86,13 +86,6 @@ const syncAction = async (state: State): Promise<State> => {
     })
     const promises = params.map((p) => prisma.articles.create(p))
     await executeQueriesWithLogging(promises, 'articles.bulk_create', params)
-    for (const item of state.items) {
-      const published_at = item.published_at
-      if (published_at) {
-        const d = new Date(published_at)
-        revalidateTag(articlesDateTag(d.getFullYear(), d.getMonth() + 1))
-      }
-    }
     revalidateTag(articlesTag)
     return { ...state, inserted: params.length, items: undefined }
   } catch (e) {

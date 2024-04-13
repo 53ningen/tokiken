@@ -43,7 +43,7 @@ const Articles = async ({ params }: Props) => {
         description="超ときめき♡宣伝部に関する記事"
       />
       <DateNavigation
-        since={new Date(TokisenRegimes[5].startDate)}
+        since={new Date(2015, 4, 11)}
         date={new Date(year, month - 1)}
         path="/articles"
       />

@@ -18,8 +18,6 @@ const DateDropdown = ({ since, date, path }: Props) => {
   )
 
   const months = Array.from({ length: 12 }, (_, i) => 12 - i)
-
-  console.log(date)
   const [year, setYear] = useState(date.getFullYear().toString())
   const [month, setMonth] = useState((date.getMonth() + 1).toString())
   const changed = () => {
@@ -30,7 +28,7 @@ const DateDropdown = ({ since, date, path }: Props) => {
   const monthOptionDisabled = (since: Date, year: number, month: number) => {
     return (
       year < since.getFullYear() ||
-      (year === since.getFullYear() && month < since.getMonth() + 1)
+      (year === since.getFullYear() && month < since.getMonth())
     )
   }
   return (
@@ -52,7 +50,7 @@ const DateDropdown = ({ since, date, path }: Props) => {
             <option
               key={m}
               value={m}
-              disabled={monthOptionDisabled(since, parseInt(year), parseInt(month))}>
+              disabled={monthOptionDisabled(since, parseInt(year), m)}>
               {m.toString().padStart(2, '0')}
             </option>
           ))}
