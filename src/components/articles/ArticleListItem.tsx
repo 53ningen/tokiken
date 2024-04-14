@@ -36,8 +36,8 @@ const ArticleListItem = ({ article }: Props) => {
               {site ? site.label : 'その他'}
             </span>
           </div>
-          <div className="h-16 font-bold overflow-hidden">{article.title}</div>
-          <div className="text-xs">{article.published_at}</div>
+          <div className="h-14 font-bold overflow-hidden">{article.title}</div>
+          <div className="pt-1 text-xs">{article.published_at}</div>
         </div>
       </div>
     </a>

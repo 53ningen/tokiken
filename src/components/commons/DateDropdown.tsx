@@ -62,7 +62,7 @@ const DateDropdown = ({ since, date, path }: Props) => {
             href={`${path}/${year}${month.padStart(2, '0')}`}
             className="flex gap-2 text-primary border rounded px-3 py-1">
             <CalendarIcon className="h-5 w-5" />
-            {year}/{month.toString().padStart(2, '0')} のカレンダーを開く
+            {year}年{month.toString().padStart(2, '0')}月のページを開く
           </Link>
         </div>
       )}

@@ -76,6 +76,34 @@ export const ArticleSites: ArticleSite[] = [
     },
   },
   {
+    id: 'tokipedia',
+    label: '#超ときぺディア',
+    articleUrlStartWith: 'https://friday.gold/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      const articleDate = dom.querySelector('time')?.getAttribute('datetime')
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        // 2024-02-15T10:30:00+09:00 => 2024-02-15 10:30
+        const published_at = articleDate.trim().replace('T', ' ').slice(0, 16)
+        return { ...basicInfo, published_at }
+      }
+    },
+    syncUrl: (_) => `https://friday.gold/gravure/feature/tokipedia`,
+    parseArticleList: (_, dom) => {
+      const urls = dom
+        .querySelectorAll('div.css-1ygnsf3 ul > li.css-18t1zqn > a:first-child')
+        .flatMap((a) => {
+          const href = a.getAttribute('href')
+          return href && (href.startsWith('/article') || href.startsWith('/gravure'))
+            ? [`https://friday.gold${href}`.split('?')[0]]
+            : []
+        })
+      return urls
+    },
+  },
+  {
     id: 'realsound',
     label: 'Real Sound',
     articleUrlStartWith: 'https://realsound.jp/',
@@ -498,6 +526,22 @@ export const ArticleSites: ArticleSite[] = [
     },
   },
   {
+    id: 'universalmusic',
+    label: 'UNIVERSAL MUSIC JAPAN',
+    articleUrlStartWith: 'https://www.universal-music.co.jp/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      const articleDate = dom.querySelector('span.tags__date')?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        // 2016.10.04 -> 2016-10-04 00:00
+        const published_at = `${articleDate.trim().replaceAll('.', '-')} 00:00`
+        return { ...basicInfo, published_at }
+      }
+    },
+  },
+  {
     id: 'nikkansport',
     label: '日刊スポーツ',
     articleUrlStartWith: 'https://www.nikkansports.com/',
@@ -524,6 +568,57 @@ export const ArticleSites: ArticleSite[] = [
           .padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`
         return { ...basicInfo, published_at, url }
       }
+    },
+  },
+  {
+    id: 'galpo',
+    label: 'ガルポ！',
+    articleUrlStartWith: 'https://galpo.info/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      // 2020.06.22 -> 2020-06-22 00:00
+      const articleDate = dom.querySelector(
+        'div.title_area div.box_wrap div.box_bl'
+      )?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        const dstring = articleDate.trim().replaceAll('.', '-')
+        const dt = new Date(dstring)
+        const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+        const hhmm = '00:00'
+        const published_at = `${yyyymmdd} ${hhmm}`
+        return { ...basicInfo, published_at, url }
+      }
+    },
+  },
+  {
+    id: 'ciao',
+    label: 'ちゃおプラス',
+    articleUrlStartWith: 'https://ciao.shogakukan.co.jp/',
+    parseArticle: (url, dom) => {
+      const basicInfo = extractBasicInfo(url, dom)
+      // 2020.06.22 -> 2020-06-22 00:00
+      const articleDate = dom.querySelector('time.article__time')?.innerText
+      if (!articleDate) {
+        return basicInfo
+      } else {
+        const dstring = articleDate.trim().replaceAll('.', '-')
+        const dt = new Date(dstring)
+        const yyyymmdd = numToYYYYMMDD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate())
+        const hhmm = '00:00'
+        const published_at = `${yyyymmdd} ${hhmm}`
+        return { ...basicInfo, published_at, url }
+      }
+    },
+    syncUrl: (_) =>
+      `https://ciao.shogakukan.co.jp/topics/tag/%E8%B6%85%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E2%99%A1%E5%AE%A3%E4%BC%9D%E9%83%A8/`,
+    parseArticleList: (_, dom) => {
+      const urls = dom.querySelectorAll('ul.card-list > li > a').flatMap((a) => {
+        const href = a.getAttribute('href')
+        return href ? [href] : []
+      })
+      return urls
     },
   },
 ]

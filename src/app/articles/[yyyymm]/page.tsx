@@ -3,7 +3,6 @@ import Breadcrumbs from '@/components/commons/Breadcrumbs/Breadcrumbs'
 import Container from '@/components/commons/Container'
 import DateNavigation from '@/components/commons/DateNavigation'
 import Title from '@/components/commons/Title'
-import { TokisenRegimes } from '@/consts/tokisen'
 import { listArticles } from '@/db/articles'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -60,7 +59,7 @@ const Articles = async ({ params }: Props) => {
         </div>
       )}
       <DateNavigation
-        since={new Date(TokisenRegimes[5].startDate)}
+        since={new Date(2015, 4, 11)}
         date={new Date(year, month - 1)}
         path="/articles"
       />
