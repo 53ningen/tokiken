@@ -1,14 +1,4 @@
-超ときめき ♡ 研究部
+# 超ときめき♡研究部
 
-## Development
-
-```bash
-# development
-yarn dev
-
-# production build
-yarn build
-
-# sync db schema
-yarn migratedb
-```
+* PUBLIC ARCHIVE
+* MOVE INTO https://github.com/tokimeki-lab/tokimeki-web
